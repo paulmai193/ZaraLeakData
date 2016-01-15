@@ -1,0 +1,16 @@
+2016-01-15 09:13:26,364 [Thread-2] ERROR GetUrlController:104 - Error when reading data from url
+java.lang.StringIndexOutOfBoundsException: String index out of range: -4
+	at java.lang.String.substring(Unknown Source)
+	at logia.zara.controller.GetUrlController.readUrl(GetUrlController.java:49)
+	at logia.zara.view.GetUrlFrame$4$1.run(GetUrlFrame.java:230)
+	at java.lang.Thread.run(Unknown Source)
+2016-01-15 09:48:37,552 [Thread-2] ERROR GetUrlController:104 - Error when reading data from url
+java.lang.StringIndexOutOfBoundsException: String index out of range: -4
+	at java.lang.String.substring(Unknown Source)
+	at logia.zara.controller.GetUrlController.scanUrl(GetUrlController.java:49)
+	at logia.zara.process.GetUrlProcess.run(GetUrlProcess.java:30)
+2016-01-15 09:48:41,505 [Thread-4] ERROR GetUrlController:104 - Error when reading data from url
+java.lang.StringIndexOutOfBoundsException: String index out of range: -4
+	at java.lang.String.substring(Unknown Source)
+	at logia.zara.controller.GetUrlController.scanUrl(GetUrlController.java:49)
+	at logia.zara.process.GetUrlProcess.run(GetUrlProcess.java:30)
