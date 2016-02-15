@@ -9,14 +9,30 @@ import javax.swing.JFileChooser;
 import logia.zara.controller.GetUrlController;
 import logia.zara.view.GetUrlFrame;
 
+/**
+ * The Class GetUrlProcess.
+ *
+ * @author Paul Mai
+ */
 public final class GetUrlProcess extends Thread {
 
+	/** The frame. */
 	private final GetUrlFrame frame;
 
+	/**
+	 * Instantiates a new gets the url process.
+	 *
+	 * @param frame the frame
+	 */
 	public GetUrlProcess(GetUrlFrame frame) {
 		this.frame = frame;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		// Disable UI components

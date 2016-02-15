@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
 import javax.swing.JProgressBar;
 
 import logia.utility.httpclient.HttpSendGet;
-import logia.zara.model.ExportToFile;
 import logia.zara.model.SaleProductData;
+import logia.zara.process.ExportToFile;
+import logia.zara.process.ExportToPdf;
 
 import org.apache.log4j.Logger;
 
@@ -39,149 +40,185 @@ public final class GetUrlController {
 	/**
 	 * Scan url.
 	 *
-	 * @param url the url
-	 * @param output the output file or folder
-	 * @param progressBar the progress bar
+	 * @param __url the url
+	 * @param __output the output file or folder
+	 * @param __progressBar the progress bar
 	 */
-	public synchronized void scanUrl(String url, String output, JProgressBar progressBar) {
+	public synchronized void scanUrl(String __url, String __output, JProgressBar __progressBar) {
 		try {
-			progressBar.setString("Scanning link, please do not turn off application!");
-			url = url.substring(0, url.lastIndexOf(".html") - 2);
-			File log = new File(output);
-			if (log.isDirectory()) {
-				log = new File(output + File.separator + "products (" + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").txt");
+			__progressBar.setString("Scanning link, please do not turn off application!");
+			__url = __url.substring(0, __url.lastIndexOf(".html") - 2);
+			File _log = new File(__output);
+			if (_log.isDirectory()) {
+				_log = new File(__output + File.separator + "products (" + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 			}
-			String number;
-			for (int i = GetUrlController.MIN; i <= GetUrlController.MAX; i++) {
-				if (i < 10) {
-					number = "0" + i;
-				}
-				else {
-					number = "" + i;
-				}
-				String request = url + number + ".html";
-				HttpSendGet get = new HttpSendGet(request, new HashMap<String, String>(), new HashMap<String, String>());
-				int httpCode = get.execute();
-				if (httpCode == 200) {
-					String html = get.getResponseContent();
+			String _number;
+			try (ExportToPdf _pdf = new ExportToPdf(_log)) {
+				_pdf.addParagraph("Sale Product");
+				_pdf.addParagraph("\n");
+				for (int i = GetUrlController.MIN; i <= GetUrlController.MAX; i++) {
+					if (i < 10) {
+						_number = "0" + i;
+					}
+					else {
+						_number = "" + i;
+					}
+					String _request = __url + _number + ".html";
+					HttpSendGet _get = new HttpSendGet(_request, new HashMap<String, String>(), new HashMap<String, String>());
+					int _httpCode = _get.execute();
+					if (_httpCode == 200) {
+						String _html = _get.getResponseContent();
 
-					html = html.replaceAll("/>\\s</", "><").replaceAll(">\\s</", "><").replaceAll("\t", "").replaceAll("\r\n", "");
+						_html = _html.replaceAll("/>\\s</", "><").replaceAll(">\\s</", "><").replaceAll("\t", "").replaceAll("\r\n", "");
 
-					SaleProductData data = new SaleProductData();
+						SaleProductData _data = new SaleProductData();
 
-					List<String> content1 = this.readProductName(html);
-					if (content1.size() == 1) {
-						data.setProductName(content1.get(0));
+						List<String> _content1 = this.readProductName(_html);
+						if (_content1.size() == 1) {
+							_data.setProductName(_content1.get(0));
 
-						List<String> content2 = this.readProductPrice(html);
-						if (content2.size() == 1) {
-							data.setProductPrice(content2.get(0));
+							List<String> _content2 = this.readProductPrice(_html);
+							if (_content2.size() == 1) {
+								_data.setProductPrice(_content2.get(0));
+							}
+
+							List<String> _content3 = this.readProductSize(_html);
+							if (_content3.size() > 0) {
+								_data.setProductSizes(_content3);
+							}
+							else {
+								_data.setProductSizes(new ArrayList<String>());
+							}
+
+							boolean _content4 = this.readOnSale(_html);
+							_data.setOnSale(_content4);
+
+							List<String> _content5 = this.readProductPhoto(_html);
+							if (_content5.size() > 0) {
+								_data.setPhotoUrl(_content5.get(0));
+							}
+
+							_data.setLink(_request);
 						}
 
-						List<String> content3 = this.readProductSize(html);
-						if (content3.size() > 0) {
-							data.setProductSizes(content3);
-						}
-
-						boolean content4 = this.readOnSale(html);
-						data.setOnSale(content4);
-
-						data.setLink(request);
+						// Write to file
+						// ExportToFile.exportOnSalesProduct(log, data);
+						ExportToFile.exportOnSalesProduct(_pdf, _data);
+					}
+					else {
+						System.out.println("OOPS, http code " + _httpCode);
 					}
 
-					// Write to file
-					ExportToFile.exportOnSalesProduct(log, data);
-				}
-				else {
-					System.out.println("OOPS, http code " + httpCode);
-				}
+					this._numProcess++;
+					__progressBar.setValue(this._numProcess);
 
-				this._numProcess++;
-				progressBar.setValue(this._numProcess);
-
-				Thread.sleep(5000);
+					Thread.sleep(5000);
+				}
+			}
+			catch (Exception _e) {
+				throw _e;
 			}
 
 		}
-		catch (Exception e) {
-			GetUrlController.LOGGER.error("Error when reading data from url", e);
+		catch (Exception _e) {
+			GetUrlController.LOGGER.error("Error when reading data from url", _e);
 		}
 		finally {
-			progressBar.setString("Finish!");
-			progressBar.setValue(0);
+			__progressBar.setString("Finish!");
+			__progressBar.setValue(0);
 		}
 	}
 
 	/**
 	 * Read on sale.
 	 *
-	 * @param webContent the web content
+	 * @param __webContent the web content
 	 * @return true, if successful
 	 */
-	private boolean readOnSale(String webContent) {
-		Matcher matcher = Pattern.compile("span class=\"line-through\"").matcher(webContent);
-		return matcher.find();
+	private boolean readOnSale(String __webContent) {
+		Matcher _matcher = Pattern.compile("span class=\"line-through\"").matcher(__webContent);
+		return _matcher.find();
 	}
 
 	/**
 	 * Read product name.
 	 *
-	 * @param webContent the web content
+	 * @param __webContent the web content
 	 * @return the list
 	 */
-	private List<String> readProductName(String webContent) {
-		Matcher matcher = Pattern.compile("<div id=\"description\"><h1>(.*?)</h1>").matcher(webContent);
-		List<String> contents = new ArrayList<String>();
-		while (matcher.find()) {
-			String tmpString = matcher.group(1).trim();
-			contents.add(tmpString);
+	private List<String> readProductName(String __webContent) {
+		Matcher _matcher = Pattern.compile("<div id=\"description\"><h1>(.*?)</h1>").matcher(__webContent);
+		List<String> _contents = new ArrayList<String>();
+		while (_matcher.find()) {
+			String _tmpString = _matcher.group(1).trim();
+			_contents.add(_tmpString);
 		}
-		return contents;
+		return _contents;
 	}
 
 	/**
 	 * Read product price.
 	 *
-	 * @param webContent the web content
+	 * @param __webContent the web content
 	 * @return the list
 	 */
-	private List<String> readProductPrice(String webContent) {
-		Matcher matcher = Pattern.compile("<span class=\"sale\" data-price=\"(.*?)\">").matcher(webContent);
-		List<String> contents = new ArrayList<String>();
-		while (matcher.find()) {
-			String tmpString = matcher.group(1).trim();
-			contents.add("Price: " + tmpString);
+	private List<String> readProductPrice(String __webContent) {
+		Matcher _matcher = Pattern.compile("<span class=\"sale\" data-price=\"(.*?)\">").matcher(__webContent);
+		List<String> _contents = new ArrayList<String>();
+		while (_matcher.find()) {
+			String _tmpString = _matcher.group(1).trim();
+			_contents.add("Price: " + _tmpString);
 		}
-		return contents;
+		return _contents;
 	}
 
 	/**
 	 * Read product size.
 	 *
-	 * @param webContent the web content
+	 * @param __webContent the web content
 	 * @return the list
 	 */
-	private List<String> readProductSize(String webContent) {
-		Matcher matcher = Pattern.compile("<div class=\"size-select\"><table>(.*?)</table>").matcher(webContent);
-		List<String> contents = new ArrayList<String>();
-		String size = "";
-		while (matcher.find()) {
-			String tmpString = matcher.group(1).trim();
-			Matcher trMatcher = Pattern.compile("<tr class=\"product-size gaTrack gaViewEvent\"(.*?)</tr>").matcher(tmpString);
-			while (trMatcher.find()) {
-				String avaiTr = trMatcher.group(1).trim();
-				Matcher tdMatcher = Pattern.compile("<td class=\"size-name\">(.*?)</td>").matcher(avaiTr);
-				while (tdMatcher.find()) {
-					String avaiTd = tdMatcher.group(1).trim();
-					size += avaiTd.concat(", ");
+	private List<String> readProductSize(String __webContent) {
+		Matcher _matcher = Pattern.compile("<div class=\"size-select\"><table>(.*?)</table>").matcher(__webContent);
+		List<String> _contents = new ArrayList<String>();
+		String _size = "";
+		while (_matcher.find()) {
+			String _tmpString = _matcher.group(1).trim();
+			Matcher _trMatcher = Pattern.compile("<tr class=\"product-size gaTrack gaViewEvent\"(.*?)</tr>").matcher(_tmpString);
+			while (_trMatcher.find()) {
+				String _avaiTr = _trMatcher.group(1).trim();
+				Matcher _tdMatcher = Pattern.compile("<td class=\"size-name\">(.*?)</td>").matcher(_avaiTr);
+				while (_tdMatcher.find()) {
+					String _avaiTd = _tdMatcher.group(1).trim();
+					_size += _avaiTd.concat(", ");
 				}
 			}
-			if (size.length() > 0) {
-				contents.add("Size: " + size.substring(0, size.length() - 2));
+			if (_size.length() > 0) {
+				_contents.add("Size: " + _size.substring(0, _size.length() - 2));
 			}
 		}
 
-		return contents;
+		return _contents;
+	}
+
+	/**
+	 * Read product photo URL.
+	 *
+	 * @param __webContent the __web content
+	 * @return the list
+	 */
+	private List<String> readProductPhoto(String __webContent) {
+		String _pattern = "<a href=\"//static.zara.net/photos(.*?)\" class=\"disabled-anchor\">";
+
+		Matcher _matcher = Pattern.compile(_pattern).matcher(__webContent);
+
+		List<String> _contents = new ArrayList<String>();
+		while (_matcher.find()) {
+			String _tmpString = _matcher.group(1).trim();
+			_contents.add("http://static.zara.net/photos" + _tmpString);
+		}
+
+		return _contents;
 	}
 
 }

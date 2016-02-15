@@ -1,5 +1,6 @@
 package logia.zara.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,6 +24,9 @@ public class SaleProductData {
 
 	/** The product sizes. */
 	private List<String> productSizes;
+
+	/** The photo url. */
+	private String       photoUrl;
 
 	/**
 	 * Instantiates a new sale product data.
@@ -64,6 +68,15 @@ public class SaleProductData {
 	 */
 	public List<String> getProductSizes() {
 		return this.productSizes;
+	}
+
+	/**
+	 * Gets the product sizes to string.
+	 *
+	 * @return the product sizes to string
+	 */
+	public String getProductSizesToString() {
+		return Arrays.toString(this.productSizes.toArray());
 	}
 
 	/**
@@ -118,6 +131,24 @@ public class SaleProductData {
 	 */
 	public void setProductSizes(List<String> productSizes) {
 		this.productSizes = productSizes;
+	}
+
+	/**
+	 * Gets the photo url.
+	 *
+	 * @return the photoUrl
+	 */
+	public String getPhotoUrl() {
+		return this.photoUrl;
+	}
+
+	/**
+	 * Sets the photo url.
+	 *
+	 * @param __photoUrl the photoUrl to set
+	 */
+	public void setPhotoUrl(String __photoUrl) {
+		this.photoUrl = __photoUrl;
 	}
 
 }
