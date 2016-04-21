@@ -4,7 +4,7 @@
 	<groupId>logia.application.zaraleakingdata</groupId>
 	<artifactId>zara-leaking-data</artifactId>
 	<version>0.0.3</version>
-	
+
 	<properties>
 		<github.global.server>github</github.global.server>
 	</properties>
@@ -15,6 +15,17 @@
 			<url>file://${project.build.directory}/logia-mvn-repo</url>
 		</repository>
 	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>logia-mvn-repo</id>
+			<url>https://raw.github.com/paulmai193/logia-mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<!-- <finalName>Zara-Leaking-Data</finalName> -->
@@ -89,7 +100,7 @@
 				<version>0.11</version>
 				<configuration>
 					<!-- git commit message -->
-					<message>Maven artifacts for ${project.version}</message>
+					<message>ZaraLeakingData artifacts for ${project.version}</message>
 					<!-- disable webpage processing -->
 					<noJekyll>true</noJekyll>
 					<!-- matches distribution management repository url above -->
@@ -102,8 +113,8 @@
 					<merge>true</merge>
 					<includes>
 						<include>**/*</include>
-					</includes>					
-					
+					</includes>
+
 					<!-- github repo name -->
 					<repositoryName>logia-mvn-repo</repositoryName>
 					<!-- github username -->
@@ -122,9 +133,19 @@
 			</plugin>
 
 			<!-- Source plugin -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> 
-				<version>2.3</version> <executions> <execution> <id>attach-sources</id> <goals> 
-				<goal>jar</goal> </goals> </execution> </executions> </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
