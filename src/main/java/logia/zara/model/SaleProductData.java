@@ -1,37 +1,29 @@
 package logia.zara.model;
 
-import java.util.Arrays;
-import java.util.List;
+import logia.utility.json.annotaion.JsonKey;
+import logia.utility.json.annotaion.JsonObject;
 
 /**
  * The Class SaleProductData.
  *
  * @author Paul Mai
  */
+@JsonObject
 public class SaleProductData {
 
 	/** The link. */
-	private String       link;
+	@JsonKey(key = "link")
+	private String		link;
 
-	/** The on sale. */
-	private boolean      onSale;
-
-	/** The product name. */
-	private String       productName;
-
-	/** The product price. */
-	private String       productPrice;
-
-	/** The product sizes. */
-	private List<String> productSizes;
-
-	/** The photo url. */
-	private String       photoUrl;
+	/** The product data. */
+	@JsonKey(key = "product_data")
+	private ProductData	productData;
 
 	/**
 	 * Instantiates a new sale product data.
 	 */
 	public SaleProductData() {
+		this.productData = new ProductData();
 	}
 
 	/**
@@ -44,51 +36,6 @@ public class SaleProductData {
 	}
 
 	/**
-	 * Gets the product name.
-	 *
-	 * @return the productName
-	 */
-	public String getProductName() {
-		return this.productName;
-	}
-
-	/**
-	 * Gets the product price.
-	 *
-	 * @return the productPrice
-	 */
-	public String getProductPrice() {
-		return this.productPrice;
-	}
-
-	/**
-	 * Gets the product sizes.
-	 *
-	 * @return the productSizes
-	 */
-	public List<String> getProductSizes() {
-		return this.productSizes;
-	}
-
-	/**
-	 * Gets the product sizes to string.
-	 *
-	 * @return the product sizes to string
-	 */
-	public String getProductSizesToString() {
-		return Arrays.toString(this.productSizes.toArray());
-	}
-
-	/**
-	 * Checks if is on sale.
-	 *
-	 * @return the onSale
-	 */
-	public boolean isOnSale() {
-		return this.onSale;
-	}
-
-	/**
 	 * Sets the link.
 	 *
 	 * @param link the link to set
@@ -98,57 +45,20 @@ public class SaleProductData {
 	}
 
 	/**
-	 * Sets the on sale.
+	 * Gets the product data.
 	 *
-	 * @param onSale the onSale to set
+	 * @return the product data
 	 */
-	public void setOnSale(boolean onSale) {
-		this.onSale = onSale;
+	public ProductData getProductData() {
+		return this.productData;
 	}
 
 	/**
-	 * Sets the product name.
+	 * Sets the product data.
 	 *
-	 * @param productName the productName to set
+	 * @param __productData the new product data
 	 */
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setProductData(ProductData __productData) {
+		this.productData = __productData;
 	}
-
-	/**
-	 * Sets the product price.
-	 *
-	 * @param productPrice the productPrice to set
-	 */
-	public void setProductPrice(String productPrice) {
-		this.productPrice = productPrice;
-	}
-
-	/**
-	 * Sets the product sizes.
-	 *
-	 * @param productSizes the productSizes to set
-	 */
-	public void setProductSizes(List<String> productSizes) {
-		this.productSizes = productSizes;
-	}
-
-	/**
-	 * Gets the photo url.
-	 *
-	 * @return the photoUrl
-	 */
-	public String getPhotoUrl() {
-		return this.photoUrl;
-	}
-
-	/**
-	 * Sets the photo url.
-	 *
-	 * @param __photoUrl the photoUrl to set
-	 */
-	public void setPhotoUrl(String __photoUrl) {
-		this.photoUrl = __photoUrl;
-	}
-
 }

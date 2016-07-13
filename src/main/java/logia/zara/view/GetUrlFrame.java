@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -35,40 +37,40 @@ public class GetUrlFrame extends JFrame {
 	// private static final Logger LOGGER = Logger.getLogger(GetUrlFrame.class);
 
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
 	/** The _btn browse. */
-	private JButton           _btnBrowse;
+	private JButton				_btnBrowse;
 
 	/** The _btn new button. */
-	private JButton           _btnRun;
+	private JButton				_btnRun;
 
 	/** The _content pane. */
-	private JPanel            _contentPane;
+	private JPanel				_contentPane;
 
 	/** The _lbl link. */
-	private JLabel            _lblLink;
+	private JLabel				_lblLink;
 
 	/** The _lbl output. */
-	private JLabel            _lblOutput;
+	private JLabel				_lblOutput;
 
 	/** The _progress bar. */
-	private JProgressBar      _progressBar;
+	private JProgressBar		_progressBar;
 
 	/** The _sp button. */
-	private JSplitPane        _spButton;
+	private JSplitPane			_spButton;
 
 	/** The _sp component. */
-	private JSplitPane        _spComponent;
+	private JSplitPane			_spComponent;
 
 	/** The _sp label. */
-	private JSplitPane        _spLabel;
+	private JSplitPane			_spLabel;
 
 	/** The _text field. */
-	private JTextField        _txfLink;
+	private JTextField			_txfLink;
 
 	/** The _txf output. */
-	private JTextField        _txfOutput;
+	private JTextField			_txfOutput;
 
 	/**
 	 * Create the frame.
@@ -80,7 +82,8 @@ public class GetUrlFrame extends JFrame {
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(450, 150);
-		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+		this.setLocation(dim.width / 2 - this.getSize().width / 2,
+		        dim.height / 2 - this.getSize().height / 2);
 		this._contentPane = new JPanel();
 		this._contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this._contentPane.setLayout(new BorderLayout(0, 0));
@@ -134,7 +137,9 @@ public class GetUrlFrame extends JFrame {
 		this._txfLink.setToolTipText("Type or copy Zara's product link here");
 		this._txfLink.setColumns(10);
 
-		this._txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output");
+		this._txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output"
+		        + File.separator + "products ("
+		        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 		this._txfOutput.setEditable(false);
 		this._txfOutput.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		this._spComponent.setLeftComponent(this._txfOutput);
@@ -154,7 +159,8 @@ public class GetUrlFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JFileChooser chooseOutputDirectory = new JFileChooser(GetUrlFrame.this._txfOutput.getText());
+				JFileChooser chooseOutputDirectory = new JFileChooser(
+		                GetUrlFrame.this._txfOutput.getText());
 				chooseOutputDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				int returnVal = chooseOutputDirectory.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {

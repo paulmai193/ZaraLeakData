@@ -4,19 +4,27 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JProgressBar;
 
-import logia.utility.httpclient.HttpSendGet;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+
+import com.gargoylesoftware.htmlunit.html.DomText;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
+import logia.utility.json.JsonUtil;
+import logia.zara.application.Application;
+import logia.zara.httpclient.HttpUnitRequest;
+import logia.zara.httpclient.listener.SalePriceListener;
 import logia.zara.model.SaleProductData;
 import logia.zara.process.ExportToFile;
 import logia.zara.process.ExportToPdf;
-
-import org.apache.log4j.Logger;
 
 /**
  * The Class GetUrlController.
@@ -26,16 +34,16 @@ import org.apache.log4j.Logger;
 public final class GetUrlController {
 
 	/** The Constant MAX. */
-	public static final int     MAX         = 99;
+	public static final int		MAX			= 10;
 
 	/** The Constant MIN. */
-	public static final int     MIN         = 1;
+	public static final int		MIN			= 1;
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER      = Logger.getLogger(GetUrlController.class);
+	private static final Logger	LOGGER		= Logger.getLogger(GetUrlController.class);
 
 	/** The _num process. */
-	private int                 _numProcess = 0;
+	private int					_numProcess	= 0;
 
 	/**
 	 * Scan url.
@@ -50,12 +58,16 @@ public final class GetUrlController {
 			__url = __url.substring(0, __url.lastIndexOf(".html") - 2);
 			File _log = new File(__output);
 			if (_log.isDirectory()) {
-				_log = new File(__output + File.separator + "products (" + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
+				_log = new File(__output + File.separator + "products ("
+				        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 			}
 			String _number;
 			try (ExportToPdf _pdf = new ExportToPdf(_log)) {
 				_pdf.addParagraph("Sale Product");
 				_pdf.addParagraph("\n");
+
+				final List<SaleProductData> _productDatas = new ArrayList<>();
+
 				for (int i = GetUrlController.MIN; i <= GetUrlController.MAX; i++) {
 					if (i < 10) {
 						_number = "0" + i;
@@ -63,50 +75,22 @@ public final class GetUrlController {
 					else {
 						_number = "" + i;
 					}
-					String _request = __url + _number + ".html";
-					HttpSendGet _get = new HttpSendGet(_request, new HashMap<String, String>(), new HashMap<String, String>());
-					int _httpCode = _get.execute();
-					if (_httpCode == 200) {
-						String _html = _get.getResponseContent();
+					final String _request = __url + _number + ".html";
+					try {
+						SaleProductData _data = scanUrl(_request);
 
-						_html = _html.replaceAll("/>\\s</", "><").replaceAll(">\\s</", "><").replaceAll("\t", "").replaceAll("\r\n", "");
-
-						SaleProductData _data = new SaleProductData();
-
-						List<String> _content1 = this.readProductName(_html);
-						if (_content1.size() == 1) {
-							_data.setProductName(_content1.get(0));
-
-							List<String> _content2 = this.readProductPrice(_html);
-							if (_content2.size() == 1) {
-								_data.setProductPrice(_content2.get(0));
-							}
-
-							List<String> _content3 = this.readProductSize(_html);
-							if (_content3.size() > 0) {
-								_data.setProductSizes(_content3);
-							}
-							else {
-								_data.setProductSizes(new ArrayList<String>());
-							}
-
-							boolean _content4 = this.readOnSale(_html);
-							_data.setOnSale(_content4);
-
-							List<String> _content5 = this.readProductPhoto(_html);
-							if (_content5.size() > 0) {
-								_data.setPhotoUrl(_content5.get(0));
-							}
-
-							_data.setLink(_request);
-						}
+						// Add to products list
+						_productDatas.add(_data);
 
 						// Write to file
-						// ExportToFile.exportOnSalesProduct(log, data);
 						ExportToFile.exportOnSalesProduct(_pdf, _data);
 					}
-					else {
-						System.out.println("OOPS, http code " + _httpCode);
+					catch (InterruptedException __ex) {
+						LOGGER.warn(__ex.getMessage() + " Go to next link!");
+						continue;
+					}
+					catch (Exception __ex) {
+						GetUrlController.LOGGER.error("Url " + _request + " not suitable", __ex);
 					}
 
 					this._numProcess++;
@@ -114,6 +98,9 @@ public final class GetUrlController {
 
 					Thread.sleep(5000);
 				}
+				// Save data to Json DB
+				FileUtils.write(Application.DB,
+				        JsonUtil.toJsonArray(_productDatas.toArray()).toString(), false);
 			}
 			catch (Exception _e) {
 				throw _e;
@@ -129,96 +116,60 @@ public final class GetUrlController {
 		}
 	}
 
-	/**
-	 * Read on sale.
-	 *
-	 * @param __webContent the web content
-	 * @return true, if successful
-	 */
-	private boolean readOnSale(String __webContent) {
-		Matcher _matcher = Pattern.compile("span class=\"line-through\"").matcher(__webContent);
-		return _matcher.find();
-	}
+	private SaleProductData scanUrl(String __url) throws Exception {
+		SaleProductData _data = new SaleProductData();
 
-	/**
-	 * Read product name.
-	 *
-	 * @param __webContent the web content
-	 * @return the list
-	 */
-	private List<String> readProductName(String __webContent) {
-		Matcher _matcher = Pattern.compile("<div id=\"description\"><h1>(.*?)</h1>").matcher(__webContent);
-		List<String> _contents = new ArrayList<String>();
-		while (_matcher.find()) {
-			String _tmpString = _matcher.group(1).trim();
-			_contents.add(_tmpString);
-		}
-		return _contents;
-	}
+		_data.setLink(__url);
 
-	/**
-	 * Read product price.
-	 *
-	 * @param __webContent the web content
-	 * @return the list
-	 */
-	private List<String> readProductPrice(String __webContent) {
-		Matcher _matcher = Pattern.compile("<span class=\"sale\" data-price=\"(.*?)\">").matcher(__webContent);
-		List<String> _contents = new ArrayList<String>();
-		while (_matcher.find()) {
-			String _tmpString = _matcher.group(1).trim();
-			_contents.add("Price: " + _tmpString);
-		}
-		return _contents;
-	}
+		// NEW
+		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(__url);) {
+			HtmlPage _page = _httpUnitRequest.crawl();
 
-	/**
-	 * Read product size.
-	 *
-	 * @param __webContent the web content
-	 * @return the list
-	 */
-	private List<String> readProductSize(String __webContent) {
-		Matcher _matcher = Pattern.compile("<div class=\"size-select\"><table>(.*?)</table>").matcher(__webContent);
-		List<String> _contents = new ArrayList<String>();
-		String _size = "";
-		while (_matcher.find()) {
-			String _tmpString = _matcher.group(1).trim();
-			Matcher _trMatcher = Pattern.compile("<tr class=\"product-size gaTrack gaViewEvent\"(.*?)</tr>").matcher(_tmpString);
-			while (_trMatcher.find()) {
-				String _avaiTr = _trMatcher.group(1).trim();
-				Matcher _tdMatcher = Pattern.compile("<td class=\"size-name\">(.*?)</td>").matcher(_avaiTr);
-				while (_tdMatcher.find()) {
-					String _avaiTd = _tdMatcher.group(1).trim();
-					_size += _avaiTd.concat(", ");
+			// Get price and on sale status
+			LOGGER.debug("Scan link " + __url);
+			LOGGER.debug("Start get price");
+			List<?> _tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/div[1]");
+			HtmlDivision _div = (HtmlDivision) _tags.get(0);
+			SalePriceListener _salePriceListener = new SalePriceListener();
+			_div.addDomChangeListener(_salePriceListener);
+			_data.getProductData().setProductPrice(_salePriceListener.getAvailablePrice());
+
+			_data.getProductData().setOnSale(_salePriceListener.isOnSale());
+			LOGGER.debug("End get price");
+
+			// Get name
+			LOGGER.debug("Start get name");
+			_tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/header/h2/text()");
+			_data.getProductData().setProductName(((DomText) _tags.get(0)).asText());
+			LOGGER.debug("End get name");
+
+			// Get photo url
+			LOGGER.debug("Start get photo");
+			_tags = _page.getByXPath("//*[@id=\"main-images\"]/div[1]/a");
+			HtmlAnchor _a = (HtmlAnchor) _tags.get(0);
+			_data.getProductData().setPhotoUrl("http:" + _a.getHrefAttribute());
+			LOGGER.debug("End get photo");
+
+			// Get product size
+			LOGGER.debug("Start get size");
+			List<String> _sizes = new ArrayList<>();
+			_tags = _page
+			        .getByXPath("//*[@id=\"product\"]/div[2]/div/div/form/div[1]/div/table/tbody");
+			HtmlTableBody _tBody = (HtmlTableBody) _tags.get(0);
+			List<HtmlTableRow> _rows = _tBody.getRows();
+			for (HtmlTableRow _tr : _rows) {
+				if (_tr.getAttribute("class").equals("product-size _product-size ")) {
+					_sizes.add(_tr.asText());
 				}
 			}
-			if (_size.length() > 0) {
-				_contents.add("Size: " + _size.substring(0, _size.length() - 2));
-			}
+			LOGGER.debug("End get size");
+
+			return _data;
+		}
+		catch (Exception __ex) {
+			throw __ex;
 		}
 
-		return _contents;
-	}
-
-	/**
-	 * Read product photo URL.
-	 *
-	 * @param __webContent the __web content
-	 * @return the list
-	 */
-	private List<String> readProductPhoto(String __webContent) {
-		String _pattern = "<a href=\"//static.zara.net/photos(.*?)\" class=\"disabled-anchor\">";
-
-		Matcher _matcher = Pattern.compile(_pattern).matcher(__webContent);
-
-		List<String> _contents = new ArrayList<String>();
-		while (_matcher.find()) {
-			String _tmpString = _matcher.group(1).trim();
-			_contents.add("http://static.zara.net/photos" + _tmpString);
-		}
-
-		return _contents;
 	}
 
 }

@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import logia.zara.model.SaleProductData;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+
+import logia.zara.model.SaleProductData;
 
 /**
  * The Class ExportToFile.
@@ -27,19 +27,21 @@ public final class ExportToFile {
 	 * @param __data the __data
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static void exportOnSalesProduct(File __output, SaleProductData __data) throws IOException {
-		if (__data.isOnSale() && !__data.getProductSizes().isEmpty()) {
+	public static void exportOnSalesProduct(File __output, SaleProductData __data)
+	        throws IOException {
+		if (__data.getProductData().isOnSale()
+		        && !__data.getProductData().getProductSizes().isEmpty()) {
 			List<String> lines = new ArrayList<String>();
 
-			lines.add(__data.getProductName());
+			lines.add(__data.getProductData().getProductName());
 			FileUtils.writeLines(__output, lines, true);
 			lines.clear();
 
-			lines.add(__data.getProductPrice());
+			lines.add(__data.getProductData().getProductPrice());
 			FileUtils.writeLines(__output, lines, true);
 			lines.clear();
 
-			FileUtils.writeLines(__output, __data.getProductSizes(), true);
+			FileUtils.writeLines(__output, __data.getProductData().getProductSizes(), true);
 
 			lines.add(__data.getLink());
 			FileUtils.writeLines(__output, lines, true);
@@ -58,17 +60,19 @@ public final class ExportToFile {
 	 * @param __data the __data
 	 * @throws Exception the exception
 	 */
-	public static void exportOnSalesProduct(ExportToPdf __pdf, SaleProductData __data) throws Exception {
-		if (__data.isOnSale() && !__data.getProductSizes().isEmpty()) {
-			__pdf.addParagraph(__data.getProductName());
-			__pdf.addParagraph(__data.getProductPrice());
-			__pdf.addParagraph(__data.getProductSizesToString());
+	public static void exportOnSalesProduct(ExportToPdf __pdf, SaleProductData __data)
+	        throws Exception {
+		if (__data.getProductData().isOnSale()
+		        && !__data.getProductData().getProductSizes().isEmpty()) {
+			__pdf.addParagraph(__data.getProductData().getProductName());
+			__pdf.addParagraph(__data.getProductData().getProductPrice());
+			__pdf.addParagraph(__data.getProductData().getProductSizesToString());
 			try {
-				System.out.println(__data.getPhotoUrl());
-				__pdf.addImage(new URL(__data.getPhotoUrl()));
+				System.out.println(__data.getProductData().getPhotoUrl());
+				__pdf.addImage(new URL(__data.getProductData().getPhotoUrl()));
 			}
 			catch (IOException _e) {
-				LOGGER.error("URL error: " + __data.getPhotoUrl(), _e);
+				LOGGER.error("URL error: " + __data.getProductData().getPhotoUrl(), _e);
 				throw _e;
 			}
 			__pdf.addParagraph(__data.getLink());

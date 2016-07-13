@@ -1,10 +1,11 @@
 package logia.zara.application;
 
 import java.awt.EventQueue;
-
-import logia.zara.view.GetUrlFrame;
+import java.io.File;
 
 import org.apache.log4j.Logger;
+
+import logia.zara.view.GetUrlFrame;
 
 /**
  * The Class Application.
@@ -14,10 +15,12 @@ import org.apache.log4j.Logger;
 public final class Application {
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(Application.class);
+	private static final Logger	LOGGER	= Logger.getLogger(Application.class);
 
 	/** The _frame. */
-	private GetUrlFrame         _frame;
+	private GetUrlFrame			_frame;
+
+	public static final File	DB		= new File("/home/logia193/Desktop/ZaraDB.json");
 
 	/**
 	 * Create the application.
