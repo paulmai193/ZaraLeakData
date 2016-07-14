@@ -6,13 +6,27 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+/**
+ * The Class HttpUnitRequest.
+ *
+ * @author Paul Mai
+ */
 public class HttpUnitRequest implements AutoCloseable {
 
+	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(HttpUnitRequest.class);
 
+	/** The url. */
 	private final String        URL;
+
+	/** The web. */
 	private WebClient           web;
 
+	/**
+	 * Instantiates a new http unit request.
+	 *
+	 * @param __url the url
+	 */
 	public HttpUnitRequest(String __url) {
 		super();
 		this.URL = __url;
@@ -25,11 +39,20 @@ public class HttpUnitRequest implements AutoCloseable {
 		this.web.getOptions().setDoNotTrackEnabled(true);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.AutoCloseable#close()
+	 */
 	@Override
 	public void close() throws Exception {
 		this.web.close();
 	}
 
+	/**
+	 * Crawl.
+	 *
+	 * @return the html page
+	 * @throws Exception the exception
+	 */
 	public HtmlPage crawl() throws Exception {
 		try {
 			return this.web.getPage(this.URL);

@@ -1,13 +1,13 @@
 package logia.zara.application;
 
 import java.awt.EventQueue;
-import java.io.File;
 
 import javax.swing.JFrame;
 
-import logia.zara.view.MenuFrame;
-
 import org.apache.log4j.Logger;
+
+import logia.redis.util.JedisFactory;
+import logia.zara.view.MenuFrame;
 
 /**
  * The Class Application.
@@ -17,19 +17,7 @@ import org.apache.log4j.Logger;
 public final class Application {
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(Application.class);
-
-	/** The frame. */
-	private JFrame              frame;
-
-	public static final File    DB     = new File("/home/logia193/Desktop/ZaraDB.json");
-
-	/**
-	 * Create the application.
-	 */
-	public Application() {
-		this.initialize();
-	}
+	private static final Logger	LOGGER	= Logger.getLogger(Application.class);
 
 	/**
 	 * Launch the application.
@@ -42,14 +30,43 @@ public final class Application {
 			@Override
 			public void run() {
 				try {
+					/* Init main application windows */
 					Application window = new Application();
 					window.frame.setVisible(true);
+
+					/* Init Jedis pool */
+					JedisFactory.getInstance().connect("localhost", 6379, 30, 0, 60000);
+
+					/* Init program exit event */
+					Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							JedisFactory jedisFactory = JedisFactory.getInstance();
+							try {
+								jedisFactory.release();
+							}
+							catch (Exception _e) {
+								// Swallow this exception
+							}
+						}
+					}));
 				}
 				catch (Exception e) {
 					Application.LOGGER.error("Error when running application", e);
 				}
 			}
 		});
+	}
+
+	/** The frame. */
+	private JFrame				frame;
+
+	/**
+	 * Create the application.
+	 */
+	public Application() {
+		this.initialize();
 	}
 
 	/**

@@ -1,8 +1,15 @@
 package logia.zara.model;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
+import com.google.gson.JsonElement;
+
+import logia.utility.json.JsonUtil;
 import logia.utility.json.annotaion.JsonKey;
 import logia.utility.json.annotaion.JsonObject;
 
@@ -14,24 +21,59 @@ import logia.utility.json.annotaion.JsonObject;
 @JsonObject
 public class ProductData {
 
+	/** The currency. */
+	@JsonKey(key="currency")
+	private String currency;
+
+	/** The link. */
+	@JsonKey(key = "link")
+	private String			link;
+
 	/** The on sale. */
-	@JsonKey(key = "on_sale")
-	private boolean      onSale;
-
-	/** The product name. */
-	@JsonKey(key = "product_name")
-	private String       productName;
-
-	/** The product price. */
-	@JsonKey(key = "product_price")
-	private String       productPrice;
-
-	/** The product sizes. */
-	private List<String> productSizes;
+	private Boolean			onSale;
 
 	/** The photo url. */
 	@JsonKey(key = "product_photo")
-	private String       photoUrl;
+	private String			photoUrl;
+
+	/** The product name. */
+	@JsonKey(key = "product_name")
+	private String			productName;
+
+	/** The product price. */
+	@JsonKey(key = "product_price")
+	private float			productPrice;
+
+	/** The product sizes. */
+	private List<String>	productSizes;
+
+	/**
+	 * Gets the currency.
+	 *
+	 * @return the currency
+	 */
+	public String getCurrency() {
+		return this.currency;
+	}
+
+	/**
+	 * Gets the link.
+	 *
+	 * @return the link
+	 */
+	public String getLink() {
+		return this.link;
+	}
+
+	/**
+	 * Gets the on sale.
+	 *
+	 * @return the on sale
+	 */
+	@JsonKey(key = "on_sale")
+	public String getOnSale() {
+		return this.onSale.toString();
+	}
 
 	/**
 	 * Gets the photo url.
@@ -56,7 +98,7 @@ public class ProductData {
 	 *
 	 * @return the product price
 	 */
-	public String getProductPrice() {
+	public float getProductPrice() {
 		return this.productPrice;
 	}
 
@@ -79,6 +121,7 @@ public class ProductData {
 		return Arrays.toString(this.productSizes.toArray());
 	}
 
+
 	/**
 	 * Checks if is on sale.
 	 *
@@ -88,12 +131,31 @@ public class ProductData {
 		return this.onSale;
 	}
 
+
+	/**
+	 * Sets the currency.
+	 *
+	 * @param __currency the new currency
+	 */
+	public void setCurrency(String __currency) {
+		this.currency = __currency;
+	}
+
+	/**
+	 * Sets the link.
+	 *
+	 * @param __link the new link
+	 */
+	public void setLink(String __link) {
+		this.link = __link;
+	}
+
 	/**
 	 * Sets the on sale.
 	 *
 	 * @param __onSale the new on sale
 	 */
-	public void setOnSale(boolean __onSale) {
+	public void setOnSale(Boolean __onSale) {
 		this.onSale = __onSale;
 	}
 
@@ -120,8 +182,17 @@ public class ProductData {
 	 *
 	 * @param __productPrice the new product price
 	 */
-	public void setProductPrice(String __productPrice) {
+	public void setProductPrice(float __productPrice) {
 		this.productPrice = __productPrice;
+	}
+
+	/**
+	 * Sets the product price.
+	 *
+	 * @param __productPrice the new product price
+	 */
+	public void setProductPrice(String __productPrice) {
+		this.productPrice = Float.parseFloat(__productPrice);
 	}
 
 	/**
@@ -133,4 +204,25 @@ public class ProductData {
 		this.productSizes = __productSizes;
 	}
 
+
+	/**
+	 * To map.
+	 *
+	 * @return the map
+	 */
+	public Map<String, String> toMap() {
+		com.google.gson.JsonObject _tmpJson = JsonUtil.toJsonObject(this);
+		final Map<String, String> _map = new HashMap<>();
+		_tmpJson.entrySet().forEach(new Consumer<Entry<String, JsonElement>>() {
+
+			/* (non-Javadoc)
+			 * @see java.util.function.Consumer#accept(java.lang.Object)
+			 */
+			@Override
+			public void accept(Entry<String, JsonElement> __t) {
+				_map.put(__t.getKey(), __t.getValue().getAsString());
+			}
+		});
+		return _map;
+	}
 }

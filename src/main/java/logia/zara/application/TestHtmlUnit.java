@@ -3,15 +3,27 @@ package logia.zara.application;
 import java.io.IOException;
 import java.util.List;
 
-import logia.zara.httpclient.listener.SalePriceListener;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import logia.zara.httpclient.listener.SalePriceListener;
+
+/**
+ * The Class TestHtmlUnit.
+ *
+ * @author Paul Mai
+ */
 public class TestHtmlUnit {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		try (WebClient _web = new WebClient(BrowserVersion.CHROME)) {
 			_web.getOptions().setThrowExceptionOnScriptError(false);

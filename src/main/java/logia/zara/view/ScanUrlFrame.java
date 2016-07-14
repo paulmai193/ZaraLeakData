@@ -25,6 +25,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import logia.zara.controller.GetUrlController;
@@ -74,11 +75,12 @@ public class ScanUrlFrame extends JFrame {
 	private JTextField        txfOutput;
 
 	/**
+	 * Instantiates a new scan url frame.
 	 */
 	public ScanUrlFrame() {
 		this.setResizable(false);
 		this.setTitle("Quét link");
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		Dimension _dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(450, 150);
@@ -137,7 +139,7 @@ public class ScanUrlFrame extends JFrame {
 		this.txfLink.setColumns(10);
 
 		this.txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output" + File.separator + "products ("
-		        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
+				+ new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 		this.txfOutput.setEditable(false);
 		this.txfOutput.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		this.spComponent.setLeftComponent(this.txfOutput);

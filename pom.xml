@@ -89,11 +89,11 @@
 			<artifactId>forms</artifactId>
 			<version>3.3.0-v20070511</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>logia</groupId>
 			<artifactId>logia-httpclient</artifactId>
 			<version>0.0.3</version>
-		</dependency>
+		</dependency> -->
 		<!-- Log4j extras -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -108,7 +108,13 @@
 			<version>5.5.8</version>
 		</dependency>
 		<!-- end PDF -->
-
+		<!-- Redis -->
+		<dependency>
+			<groupId>logia</groupId>
+			<artifactId>logia-redis</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<!-- end Redis -->
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>

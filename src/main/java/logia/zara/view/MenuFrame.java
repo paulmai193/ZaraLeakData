@@ -10,15 +10,21 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * The Class MenuFrame.
+ *
+ * @author Paul Mai
+ */
 public class MenuFrame extends JFrame {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+
+	/** The frame. */
 	private JFrame            frame;
 
 	/**
+	 * Instantiates a new menu frame.
 	 */
 	public MenuFrame() {
 		this.setTitle("Menu");
@@ -48,7 +54,7 @@ public class MenuFrame extends JFrame {
 		_btnCheckSale.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent __e) {
-				MenuFrame.this.frame = new CheckSaleFrame(MenuFrame.this);
+				MenuFrame.this.frame = new TrackSaleFrame(MenuFrame.this);
 				MenuFrame.this.frame.setVisible(true);
 				MenuFrame.this.setVisible(false);
 			}
@@ -62,6 +68,9 @@ public class MenuFrame extends JFrame {
 		_panelButton.add(_btnComparePrice);
 	}
 
+	/**
+	 * Call back.
+	 */
 	public void callBack() {
 		this.setVisible(true);
 	}

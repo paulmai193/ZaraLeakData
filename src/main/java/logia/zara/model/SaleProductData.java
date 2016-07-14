@@ -11,28 +11,19 @@ import logia.utility.json.annotaion.JsonObject;
 @JsonObject
 public class SaleProductData {
 
-	/** The link. */
-	@JsonKey(key = "link")
-	private String      link;
-
 	/** The product data. */
 	@JsonKey(key = "product_data")
-	private ProductData productData;
+	private ProductData	productData;
+
+	/** The link. */
+	@JsonKey(key = "ref")
+	private String		ref;
 
 	/**
 	 * Instantiates a new sale product data.
 	 */
 	public SaleProductData() {
 		this.productData = new ProductData();
-	}
-
-	/**
-	 * Gets the link.
-	 *
-	 * @return the link
-	 */
-	public String getLink() {
-		return this.link;
 	}
 
 	/**
@@ -45,12 +36,12 @@ public class SaleProductData {
 	}
 
 	/**
-	 * Sets the link.
+	 * Gets the ref.
 	 *
-	 * @param link the link to set
+	 * @return the ref
 	 */
-	public void setLink(String link) {
-		this.link = link;
+	public String getRef() {
+		return this.ref;
 	}
 
 	/**
@@ -60,5 +51,14 @@ public class SaleProductData {
 	 */
 	public void setProductData(ProductData __productData) {
 		this.productData = __productData;
+	}
+
+	/**
+	 * Sets the ref.
+	 *
+	 * @param __ref the new ref
+	 */
+	public void setRef(String __ref) {
+		this.ref = __ref;
 	}
 }
