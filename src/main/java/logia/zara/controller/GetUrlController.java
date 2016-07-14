@@ -8,6 +8,14 @@ import java.util.List;
 
 import javax.swing.JProgressBar;
 
+import logia.utility.json.JsonUtil;
+import logia.zara.application.Application;
+import logia.zara.httpclient.HttpUnitRequest;
+import logia.zara.httpclient.listener.SalePriceListener;
+import logia.zara.model.SaleProductData;
+import logia.zara.process.ExportToFile;
+import logia.zara.process.ExportToPdf;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -18,14 +26,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import logia.utility.json.JsonUtil;
-import logia.zara.application.Application;
-import logia.zara.httpclient.HttpUnitRequest;
-import logia.zara.httpclient.listener.SalePriceListener;
-import logia.zara.model.SaleProductData;
-import logia.zara.process.ExportToFile;
-import logia.zara.process.ExportToPdf;
-
 /**
  * The Class GetUrlController.
  *
@@ -34,16 +34,16 @@ import logia.zara.process.ExportToPdf;
 public final class GetUrlController {
 
 	/** The Constant MAX. */
-	public static final int		MAX			= 10;
+	public static final int     MAX         = 10;
 
 	/** The Constant MIN. */
-	public static final int		MIN			= 1;
+	public static final int     MIN         = 1;
 
 	/** The Constant LOGGER. */
-	private static final Logger	LOGGER		= Logger.getLogger(GetUrlController.class);
+	private static final Logger LOGGER      = Logger.getLogger(GetUrlController.class);
 
 	/** The _num process. */
-	private int					_numProcess	= 0;
+	private int                 _numProcess = 0;
 
 	/**
 	 * Scan url.
@@ -58,8 +58,7 @@ public final class GetUrlController {
 			__url = __url.substring(0, __url.lastIndexOf(".html") - 2);
 			File _log = new File(__output);
 			if (_log.isDirectory()) {
-				_log = new File(__output + File.separator + "products ("
-				        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
+				_log = new File(__output + File.separator + "products (" + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 			}
 			String _number;
 			try (ExportToPdf _pdf = new ExportToPdf(_log)) {
@@ -77,7 +76,7 @@ public final class GetUrlController {
 					}
 					final String _request = __url + _number + ".html";
 					try {
-						SaleProductData _data = scanUrl(_request);
+						SaleProductData _data = this.scanUrl(_request);
 
 						// Add to products list
 						_productDatas.add(_data);
@@ -86,7 +85,7 @@ public final class GetUrlController {
 						ExportToFile.exportOnSalesProduct(_pdf, _data);
 					}
 					catch (InterruptedException __ex) {
-						LOGGER.warn(__ex.getMessage() + " Go to next link!");
+						GetUrlController.LOGGER.warn(__ex.getMessage() + " Go to next link!");
 						continue;
 					}
 					catch (Exception __ex) {
@@ -99,8 +98,7 @@ public final class GetUrlController {
 					Thread.sleep(5000);
 				}
 				// Save data to Json DB
-				FileUtils.write(Application.DB,
-				        JsonUtil.toJsonArray(_productDatas.toArray()).toString(), false);
+				FileUtils.write(Application.DB, JsonUtil.toJsonArray(_productDatas.toArray()).toString(), false);
 			}
 			catch (Exception _e) {
 				throw _e;
@@ -116,7 +114,7 @@ public final class GetUrlController {
 		}
 	}
 
-	private SaleProductData scanUrl(String __url) throws Exception {
+	public SaleProductData scanUrl(String __url) throws Exception {
 		SaleProductData _data = new SaleProductData();
 
 		_data.setLink(__url);
@@ -126,8 +124,8 @@ public final class GetUrlController {
 			HtmlPage _page = _httpUnitRequest.crawl();
 
 			// Get price and on sale status
-			LOGGER.debug("Scan link " + __url);
-			LOGGER.debug("Start get price");
+			GetUrlController.LOGGER.debug("Scan link " + __url);
+			GetUrlController.LOGGER.debug("Start get price");
 			List<?> _tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/div[1]");
 			HtmlDivision _div = (HtmlDivision) _tags.get(0);
 			SalePriceListener _salePriceListener = new SalePriceListener();
@@ -135,26 +133,25 @@ public final class GetUrlController {
 			_data.getProductData().setProductPrice(_salePriceListener.getAvailablePrice());
 
 			_data.getProductData().setOnSale(_salePriceListener.isOnSale());
-			LOGGER.debug("End get price");
+			GetUrlController.LOGGER.debug("End get price");
 
 			// Get name
-			LOGGER.debug("Start get name");
+			GetUrlController.LOGGER.debug("Start get name");
 			_tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/header/h2/text()");
 			_data.getProductData().setProductName(((DomText) _tags.get(0)).asText());
-			LOGGER.debug("End get name");
+			GetUrlController.LOGGER.debug("End get name");
 
 			// Get photo url
-			LOGGER.debug("Start get photo");
+			GetUrlController.LOGGER.debug("Start get photo");
 			_tags = _page.getByXPath("//*[@id=\"main-images\"]/div[1]/a");
 			HtmlAnchor _a = (HtmlAnchor) _tags.get(0);
 			_data.getProductData().setPhotoUrl("http:" + _a.getHrefAttribute());
-			LOGGER.debug("End get photo");
+			GetUrlController.LOGGER.debug("End get photo");
 
 			// Get product size
-			LOGGER.debug("Start get size");
+			GetUrlController.LOGGER.debug("Start get size");
 			List<String> _sizes = new ArrayList<>();
-			_tags = _page
-			        .getByXPath("//*[@id=\"product\"]/div[2]/div/div/form/div[1]/div/table/tbody");
+			_tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/form/div[1]/div/table/tbody");
 			HtmlTableBody _tBody = (HtmlTableBody) _tags.get(0);
 			List<HtmlTableRow> _rows = _tBody.getRows();
 			for (HtmlTableRow _tr : _rows) {
@@ -162,7 +159,7 @@ public final class GetUrlController {
 					_sizes.add(_tr.asText());
 				}
 			}
-			LOGGER.debug("End get size");
+			GetUrlController.LOGGER.debug("End get size");
 
 			return _data;
 		}

@@ -13,11 +13,11 @@ public class SaleProductData {
 
 	/** The link. */
 	@JsonKey(key = "link")
-	private String		link;
+	private String      link;
 
 	/** The product data. */
 	@JsonKey(key = "product_data")
-	private ProductData	productData;
+	private ProductData productData;
 
 	/**
 	 * Instantiates a new sale product data.
@@ -36,21 +36,21 @@ public class SaleProductData {
 	}
 
 	/**
-	 * Sets the link.
-	 *
-	 * @param link the link to set
-	 */
-	public void setLink(String link) {
-		this.link = link;
-	}
-
-	/**
 	 * Gets the product data.
 	 *
 	 * @return the product data
 	 */
 	public ProductData getProductData() {
 		return this.productData;
+	}
+
+	/**
+	 * Sets the link.
+	 *
+	 * @param link the link to set
+	 */
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 	/**

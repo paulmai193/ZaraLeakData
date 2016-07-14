@@ -16,22 +16,68 @@ public class ProductData {
 
 	/** The on sale. */
 	@JsonKey(key = "on_sale")
-	private boolean			onSale;
+	private boolean      onSale;
 
 	/** The product name. */
 	@JsonKey(key = "product_name")
-	private String			productName;
+	private String       productName;
 
 	/** The product price. */
 	@JsonKey(key = "product_price")
-	private String			productPrice;
+	private String       productPrice;
 
 	/** The product sizes. */
-	private List<String>	productSizes;
+	private List<String> productSizes;
 
 	/** The photo url. */
 	@JsonKey(key = "product_photo")
-	private String			photoUrl;
+	private String       photoUrl;
+
+	/**
+	 * Gets the photo url.
+	 *
+	 * @return the photo url
+	 */
+	public String getPhotoUrl() {
+		return this.photoUrl;
+	}
+
+	/**
+	 * Gets the product name.
+	 *
+	 * @return the product name
+	 */
+	public String getProductName() {
+		return this.productName;
+	}
+
+	/**
+	 * Gets the product price.
+	 *
+	 * @return the product price
+	 */
+	public String getProductPrice() {
+		return this.productPrice;
+	}
+
+	/**
+	 * Gets the product sizes.
+	 *
+	 * @return the product sizes
+	 */
+	public List<String> getProductSizes() {
+		return this.productSizes;
+	}
+
+	/**
+	 * Gets the product sizes to string.
+	 *
+	 * @return the product sizes to string
+	 */
+	@JsonKey(key = "product_size")
+	public String getProductSizesToString() {
+		return Arrays.toString(this.productSizes.toArray());
+	}
 
 	/**
 	 * Checks if is on sale.
@@ -52,12 +98,12 @@ public class ProductData {
 	}
 
 	/**
-	 * Gets the product name.
+	 * Sets the photo url.
 	 *
-	 * @return the product name
+	 * @param __photoUrl the new photo url
 	 */
-	public String getProductName() {
-		return this.productName;
+	public void setPhotoUrl(String __photoUrl) {
+		this.photoUrl = __photoUrl;
 	}
 
 	/**
@@ -70,15 +116,6 @@ public class ProductData {
 	}
 
 	/**
-	 * Gets the product price.
-	 *
-	 * @return the product price
-	 */
-	public String getProductPrice() {
-		return this.productPrice;
-	}
-
-	/**
 	 * Sets the product price.
 	 *
 	 * @param __productPrice the new product price
@@ -88,49 +125,12 @@ public class ProductData {
 	}
 
 	/**
-	 * Gets the product sizes.
-	 *
-	 * @return the product sizes
-	 */
-	public List<String> getProductSizes() {
-		return this.productSizes;
-	}
-
-	/**
 	 * Sets the product sizes.
 	 *
 	 * @param __productSizes the new product sizes
 	 */
 	public void setProductSizes(List<String> __productSizes) {
 		this.productSizes = __productSizes;
-	}
-
-	/**
-	 * Gets the product sizes to string.
-	 *
-	 * @return the product sizes to string
-	 */
-	@JsonKey(key = "product_size")
-	public String getProductSizesToString() {
-		return Arrays.toString(this.productSizes.toArray());
-	}
-
-	/**
-	 * Gets the photo url.
-	 *
-	 * @return the photo url
-	 */
-	public String getPhotoUrl() {
-		return this.photoUrl;
-	}
-
-	/**
-	 * Sets the photo url.
-	 *
-	 * @param __photoUrl the new photo url
-	 */
-	public void setPhotoUrl(String __photoUrl) {
-		this.photoUrl = __photoUrl;
 	}
 
 }

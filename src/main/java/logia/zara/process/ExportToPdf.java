@@ -35,36 +35,9 @@ public class ExportToPdf implements Closeable {
 	 */
 	public ExportToPdf(File __pdfDocument) throws FileNotFoundException, DocumentException {
 		this.pdfDocument = new Document();
-		PdfWriter.getInstance(pdfDocument, new FileOutputStream(__pdfDocument));
+		PdfWriter.getInstance(this.pdfDocument, new FileOutputStream(__pdfDocument));
 		this.pdfDocument.open();
 		this.pdfDocument.addTitle(__pdfDocument.getName());
-	}
-
-	/**
-	 * Adds the paragraph.
-	 *
-	 * @param __paragraphText the __paragraph text
-	 * @throws DocumentException the document exception
-	 */
-	public void addParagraph(String __paragraphText) throws DocumentException {
-		Paragraph _paragraph = new Paragraph(__paragraphText);
-		_paragraph.setFont(new Font(FontFamily.TIMES_ROMAN, 10));
-		this.pdfDocument.add(_paragraph);
-	}
-
-	/**
-	 * Adds the link.
-	 *
-	 * @param __link the __link
-	 * @throws DocumentException the document exception
-	 */
-	public void addLink(URL __link) throws DocumentException {
-		Paragraph _paragraph = new Paragraph();
-		Anchor _anchor = new Anchor(__link.toString());
-		_anchor.setReference(__link.toString());
-		_anchor.setFont(new Font(FontFamily.TIMES_ROMAN, 10));
-		_paragraph.add(_anchor);
-		this.pdfDocument.add(_paragraph);
 	}
 
 	/**
@@ -108,8 +81,35 @@ public class ExportToPdf implements Closeable {
 
 		Paragraph _paragraph = new Paragraph();
 		Image _image = Image.getInstance(__link);
-		_image.scalePercent((float) 5);
+		_image.scalePercent(5);
 		_paragraph.add(_image);
+		this.pdfDocument.add(_paragraph);
+	}
+
+	/**
+	 * Adds the link.
+	 *
+	 * @param __link the __link
+	 * @throws DocumentException the document exception
+	 */
+	public void addLink(URL __link) throws DocumentException {
+		Paragraph _paragraph = new Paragraph();
+		Anchor _anchor = new Anchor(__link.toString());
+		_anchor.setReference(__link.toString());
+		_anchor.setFont(new Font(FontFamily.TIMES_ROMAN, 10));
+		_paragraph.add(_anchor);
+		this.pdfDocument.add(_paragraph);
+	}
+
+	/**
+	 * Adds the paragraph.
+	 *
+	 * @param __paragraphText the __paragraph text
+	 * @throws DocumentException the document exception
+	 */
+	public void addParagraph(String __paragraphText) throws DocumentException {
+		Paragraph _paragraph = new Paragraph(__paragraphText);
+		_paragraph.setFont(new Font(FontFamily.TIMES_ROMAN, 10));
 		this.pdfDocument.add(_paragraph);
 	}
 

@@ -3,9 +3,11 @@ package logia.zara.application;
 import java.awt.EventQueue;
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import javax.swing.JFrame;
 
-import logia.zara.view.GetUrlFrame;
+import logia.zara.view.MenuFrame;
+
+import org.apache.log4j.Logger;
 
 /**
  * The Class Application.
@@ -15,12 +17,12 @@ import logia.zara.view.GetUrlFrame;
 public final class Application {
 
 	/** The Constant LOGGER. */
-	private static final Logger	LOGGER	= Logger.getLogger(Application.class);
+	private static final Logger LOGGER = Logger.getLogger(Application.class);
 
-	/** The _frame. */
-	private GetUrlFrame			_frame;
+	/** The frame. */
+	private JFrame              frame;
 
-	public static final File	DB		= new File("/home/logia193/Desktop/ZaraDB.json");
+	public static final File    DB     = new File("/home/logia193/Desktop/ZaraDB.json");
 
 	/**
 	 * Create the application.
@@ -41,7 +43,7 @@ public final class Application {
 			public void run() {
 				try {
 					Application window = new Application();
-					window._frame.setVisible(true);
+					window.frame.setVisible(true);
 				}
 				catch (Exception e) {
 					Application.LOGGER.error("Error when running application", e);
@@ -54,7 +56,7 @@ public final class Application {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this._frame = new GetUrlFrame();
+		this.frame = new MenuFrame();
 	}
 
 }
