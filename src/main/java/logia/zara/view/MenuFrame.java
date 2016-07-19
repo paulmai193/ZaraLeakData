@@ -63,7 +63,14 @@ public class MenuFrame extends JFrame {
 		_panelButton.add(_btnCheckSale);
 
 		JButton _btnComparePrice = new JButton("So sánh giá");
-		_btnComparePrice.setEnabled(false);
+		_btnComparePrice.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent __e) {
+				MenuFrame.this.frame = new ComparePriceFrame(MenuFrame.this);
+				MenuFrame.this.frame.setVisible(true);
+				MenuFrame.this.setVisible(false);
+			}
+		});
 		_btnComparePrice.setPreferredSize(new Dimension(170, 25));
 		_panelButton.add(_btnComparePrice);
 	}
