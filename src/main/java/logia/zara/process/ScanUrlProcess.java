@@ -16,8 +16,17 @@ import logia.zara.view.ScanUrlFrame;
  */
 public final class ScanUrlProcess extends Thread {
 
+	/** The Constant MAX. */
+	public static final int		MAX			= 10;
+
+	/** The Constant MIN. */
+	public static final int		MIN			= 1;
+
+	/** The number running process. */
+	public static int			numProcess	= 0;
+
 	/** The frame. */
-	private final ScanUrlFrame frame;
+	private final ScanUrlFrame	frame;
 
 	/**
 	 * Instantiates a new scan url process.
@@ -43,7 +52,8 @@ public final class ScanUrlProcess extends Thread {
 
 		// Run scan data from url
 		GetUrlController _controller = new GetUrlController();
-		_controller.scanUrl(this.frame.getTxfLink().getText(), this.frame.getTxfOutput().getText(), this.frame.getProgressBar());
+		_controller.scanUrl(this.frame.getTxfLink().getText(), this.frame.getTxfOutput().getText(),
+		        this.frame.getProgressBar());
 
 		// Enable UI components
 		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

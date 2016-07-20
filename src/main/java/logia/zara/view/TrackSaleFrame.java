@@ -60,7 +60,7 @@ public class TrackSaleFrame extends JFrame {
 
 		Dimension _dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(_dim.width / 2 - this.getSize().width / 2,
-				_dim.height / 2 - this.getSize().height / 2);
+		        _dim.height / 2 - this.getSize().height / 2);
 
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -79,12 +79,12 @@ public class TrackSaleFrame extends JFrame {
 		this.txfWishList.setPreferredSize(new Dimension(300, 25));
 		this.contentPane.add(this.txfWishList, BorderLayout.CENTER);
 
-		this.btnBrowse = new JButton("Browse");
+		this.btnBrowse = new JButton("Wishlist");
 		this.btnBrowse.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent __e) {
 				JFileChooser chooseOutputDirectory = new JFileChooser(
-						TrackSaleFrame.this.txfWishList.getText());
+		                TrackSaleFrame.this.txfWishList.getText());
 				chooseOutputDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				int _returnVal = chooseOutputDirectory.showOpenDialog(null);
 				if (_returnVal == JFileChooser.APPROVE_OPTION) {

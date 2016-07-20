@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import logia.redis.util.JedisFactory;
+import logia.utility.email.EmailUtil;
 import logia.zara.view.MenuFrame;
 
 /**
@@ -17,7 +18,7 @@ import logia.zara.view.MenuFrame;
 public final class Application {
 
 	/** The Constant LOGGER. */
-	private static final Logger	LOGGER	= Logger.getLogger(Application.class);
+	private static final Logger LOGGER = Logger.getLogger(Application.class);
 
 	/**
 	 * Launch the application.
@@ -37,20 +38,24 @@ public final class Application {
 					/* Init Jedis pool */
 					JedisFactory.getInstance().connect("localhost", 6379, 30, 0, 60000);
 
+					/* Init email utility */
+					EmailUtil.setPropertiesPath(EmailUtil.class.getClassLoader()
+		                    .getResource("email.properties").toURI());
+
 					/* Init program exit event */
 					Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
-						@Override
-						public void run() {
-							JedisFactory jedisFactory = JedisFactory.getInstance();
-							try {
-								jedisFactory.release();
-							}
-							catch (Exception _e) {
-								// Swallow this exception
-							}
-						}
-					}));
+			            @Override
+			            public void run() {
+				            JedisFactory jedisFactory = JedisFactory.getInstance();
+				            try {
+					            jedisFactory.release();
+				            }
+				            catch (Exception _e) {
+					            // Swallow this exception
+				            }
+			            }
+		            }));
 				}
 				catch (Exception e) {
 					Application.LOGGER.error("Error when running application", e);
@@ -60,7 +65,7 @@ public final class Application {
 	}
 
 	/** The frame. */
-	private JFrame				frame;
+	private JFrame frame;
 
 	/**
 	 * Create the application.

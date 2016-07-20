@@ -58,6 +58,7 @@ public class Data extends HashRedisClass {
 		_saleProductData.getProductData().setPhotoUrl(this.getValue().get("product_photo"));
 		_saleProductData.getProductData().setProductName(this.getValue().get("product_name"));
 		_saleProductData.getProductData().setProductPrice(this.getValue().get("product_price"));
+		_saleProductData.getProductData().setCurrency(this.getValue().get("currency"));
 		String _priceString = this.getValue().get("product_size");
 		_priceString = _priceString.substring(1, _priceString.length() - 2);
 		_saleProductData.getProductData().setProductSizes(Arrays.asList(_priceString.split(",")));

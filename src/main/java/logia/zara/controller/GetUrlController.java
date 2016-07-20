@@ -25,6 +25,7 @@ import logia.zara.httpclient.listener.SalePriceListener;
 import logia.zara.model.SaleProductData;
 import logia.zara.process.ExportToFile;
 import logia.zara.process.ExportToPdf;
+import logia.zara.process.ScanUrlProcess;
 
 /**
  * The Class GetUrlController.
@@ -34,16 +35,7 @@ import logia.zara.process.ExportToPdf;
 public final class GetUrlController {
 
 	/** The Constant LOGGER. */
-	private static final Logger	LOGGER		= Logger.getLogger(GetUrlController.class);
-
-	/** The Constant MAX. */
-	public static final int		MAX			= 10;
-
-	/** The Constant MIN. */
-	public static final int		MIN			= 1;
-
-	/** The _num process. */
-	private int					_numProcess	= 0;
+	private static final Logger LOGGER = Logger.getLogger(GetUrlController.class);
 
 	/**
 	 * Scan url.
@@ -56,7 +48,6 @@ public final class GetUrlController {
 		SaleProductData _data = new SaleProductData();
 		_data.getProductData().setLink(__url);
 
-		// NEW
 		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(__url);) {
 			HtmlPage _page = _httpUnitRequest.crawl();
 
@@ -137,7 +128,7 @@ public final class GetUrlController {
 
 				final List<SaleProductData> _productDatas = new ArrayList<>();
 
-				for (int i = GetUrlController.MIN; i <= GetUrlController.MAX; i++) {
+				for (int i = ScanUrlProcess.MIN; i <= ScanUrlProcess.MAX; i++) {
 					if (i < 10) {
 						_number = "0" + i;
 					}
@@ -162,8 +153,8 @@ public final class GetUrlController {
 						GetUrlController.LOGGER.error("Url " + _request + " not suitable", __ex);
 					}
 
-					this._numProcess++;
-					__progressBar.setValue(this._numProcess);
+					ScanUrlProcess.numProcess++;
+					__progressBar.setValue(ScanUrlProcess.numProcess);
 
 					Thread.sleep(5000);
 				}

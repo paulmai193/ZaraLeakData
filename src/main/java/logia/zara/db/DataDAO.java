@@ -31,19 +31,20 @@ public class DataDAO extends HashRedisDAO<Data> {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see logia.redis.dao.HashRedisDAO#get(java.lang.String)
 	 */
 	@Override
 	public Data get(String __ref) {
 		Redis _redis = new Redis();
 		String _key = Data.KEY.replace("<ref>", __ref);
-		Data _data;
+		Data _data = new Data();
+		_data.setKey(_key);
 		Map<String, String> _value = null;
 		try {
 			_value = _redis.getJedis().hgetAll(_key);
-			_data = new Data();
-			_data.setKey(_key);
 			_data.setValue(_value);
 		}
 		catch (Exception _e) {
@@ -56,7 +57,9 @@ public class DataDAO extends HashRedisDAO<Data> {
 		return _data;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see logia.redis.dao.AbstractRedisDAO#getPrefixKey()
 	 */
 	@Override

@@ -28,7 +28,6 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import logia.zara.controller.GetUrlController;
 import logia.zara.process.ScanUrlProcess;
 
 /**
@@ -39,40 +38,40 @@ import logia.zara.process.ScanUrlProcess;
 public class ScanUrlFrame extends JFrame {
 
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
 	/** The button browse. */
-	private JButton           btnBrowse;
+	private JButton				btnBrowse;
 
 	/** The button new button. */
-	private JButton           btnRun;
+	private JButton				btnRun;
 
 	/** The content pane. */
-	private JPanel            contentPane;
+	private JPanel				contentPane;
 
 	/** The lable link. */
-	private JLabel            lblLink;
+	private JLabel				lblLink;
 
 	/** The lable output. */
-	private JLabel            lblOutput;
+	private JLabel				lblOutput;
 
 	/** The progress bar. */
-	private JProgressBar      progressBar;
+	private JProgressBar		progressBar;
 
 	/** The split button. */
-	private JSplitPane        spButton;
+	private JSplitPane			spButton;
 
 	/** The split component. */
-	private JSplitPane        spComponent;
+	private JSplitPane			spComponent;
 
 	/** The split label. */
-	private JSplitPane        spLabel;
+	private JSplitPane			spLabel;
 
 	/** The text field link. */
-	private JTextField        txfLink;
+	private JTextField			txfLink;
 
 	/** The text field output. */
-	private JTextField        txfOutput;
+	private JTextField			txfOutput;
 
 	/**
 	 * Instantiates a new scan url frame.
@@ -84,7 +83,8 @@ public class ScanUrlFrame extends JFrame {
 
 		Dimension _dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(450, 150);
-		this.setLocation(_dim.width / 2 - this.getSize().width / 2, _dim.height / 2 - this.getSize().height / 2);
+		this.setLocation(_dim.width / 2 - this.getSize().width / 2,
+		        _dim.height / 2 - this.getSize().height / 2);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.contentPane.setLayout(new BorderLayout(0, 0));
@@ -96,8 +96,8 @@ public class ScanUrlFrame extends JFrame {
 		this.contentPane.add(_lblExportZaraData, BorderLayout.NORTH);
 
 		this.progressBar = new JProgressBar();
-		this.progressBar.setMinimum(GetUrlController.MIN);
-		this.progressBar.setMaximum(GetUrlController.MAX);
+		this.progressBar.setMinimum(ScanUrlProcess.MIN);
+		this.progressBar.setMaximum(ScanUrlProcess.MAX);
 		this.progressBar.setValue(0);
 		this.progressBar.setStringPainted(true);
 		this.progressBar.setString("");
@@ -138,8 +138,9 @@ public class ScanUrlFrame extends JFrame {
 		this.txfLink.setToolTipText("Type or copy Zara's product link here");
 		this.txfLink.setColumns(10);
 
-		this.txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output" + File.separator + "products ("
-				+ new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
+		this.txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output"
+		        + File.separator + "products ("
+		        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 		this.txfOutput.setEditable(false);
 		this.txfOutput.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		this.spComponent.setLeftComponent(this.txfOutput);
@@ -167,7 +168,8 @@ public class ScanUrlFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent __e) {
-				JFileChooser _chooseOutputDirectory = new JFileChooser(ScanUrlFrame.this.txfOutput.getText());
+				JFileChooser _chooseOutputDirectory = new JFileChooser(
+		                ScanUrlFrame.this.txfOutput.getText());
 				_chooseOutputDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				int _returnVal = _chooseOutputDirectory.showOpenDialog(null);
 				if (_returnVal == JFileChooser.APPROVE_OPTION) {
