@@ -1,6 +1,7 @@
 package logia.zara.controller;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,7 +113,7 @@ public final class GetUrlController {
 	 * @param __output the output file or folder
 	 * @param __progressBar the progress bar
 	 */
-	public synchronized void scanUrl(String __url, String __output, JProgressBar __progressBar) {
+	public void scanUrl(String __url, String __output, JProgressBar __progressBar) {
 		try {
 			__progressBar.setString("Scanning link, please do not turn off application!");
 			__url = __url.substring(0, __url.lastIndexOf(".html") - 2);
@@ -174,6 +175,26 @@ public final class GetUrlController {
 		finally {
 			__progressBar.setString("Finish!");
 			__progressBar.setValue(0);
+		}
+	}
+
+	/**
+	 * Exchange currency, using Yahoo API
+	 *
+	 * @param __from the from
+	 * @param __to the to
+	 * @param __value the value
+	 * @throws Exception the exception
+	 */
+	public void exchangeCurrency(String __from, String __to, float __value) throws Exception {
+		String _api = "https://query.yahooapis.com/v1/public/yql?"
+		        + "q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22{0}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+		_api = MessageFormat.format(_api, __from + __to);
+		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(_api);) {
+			System.out.println(_httpUnitRequest.rawCrawl());
+		}
+		catch (Exception __ex) {
+			throw __ex;
 		}
 	}
 
