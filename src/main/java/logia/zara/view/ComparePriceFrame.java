@@ -19,22 +19,23 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import logia.zara.process.ComparePriceProcess;
-
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import logia.zara.process.ComparePriceProcess;
+
 public class ComparePriceFrame extends JFrame {
 
 	/**
-     * 
-     */
-	private static final long serialVersionUID = 1L;
-	private JPanel            contentPane;
-	private JTextField        txfLink;
-	private JButton           btnRun;
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+	private JPanel				contentPane;
+	private JTextField			txfLink;
+	private JButton				btnRun;
+	private JCheckBox[]			checkBoxsCountries;
 
 	/**
 	 * Create the frame.
@@ -42,10 +43,11 @@ public class ComparePriceFrame extends JFrame {
 	public ComparePriceFrame() {
 		setTitle("So sánh giá");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 191);
+		setBounds(100, 100, 450, 129);
 
 		Dimension _dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(_dim.width / 2 - this.getSize().width / 2, _dim.height / 2 - this.getSize().height / 2);
+		this.setLocation(_dim.width / 2 - this.getSize().width / 2,
+		        _dim.height / 2 - this.getSize().height / 2);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -59,24 +61,28 @@ public class ComparePriceFrame extends JFrame {
 
 		JPanel _panelContent = new JPanel();
 		contentPane.add(_panelContent, BorderLayout.CENTER);
-		_panelContent.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("left:pref"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-		        ColumnSpec.decode("pref:grow"), FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("right:pref"), }, new RowSpec[] {
-		        FormSpecs.PREF_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.LINE_GAP_ROWSPEC,
-		        FormSpecs.PREF_ROWSPEC, }));
+		_panelContent.setLayout(new FormLayout(
+		        new ColumnSpec[] { ColumnSpec.decode("left:pref"),
+		                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("pref:grow"),
+		                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("right:pref"), },
+		        new RowSpec[] { FormSpecs.PREF_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+		                RowSpec.decode("default:grow"), FormSpecs.LINE_GAP_ROWSPEC,
+		                FormSpecs.PREF_ROWSPEC, }));
 
-		JLabel _lblLink = new JLabel("Link");
+		JLabel _lblLink = new JLabel("Link SP");
 		_lblLink.setHorizontalAlignment(SwingConstants.RIGHT);
 		_lblLink.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		_lblLink.setPreferredSize(new Dimension(50, 25));
+		_lblLink.setPreferredSize(new Dimension(55, 25));
 		_panelContent.add(_lblLink, "1, 1, right, default");
 
 		txfLink = new JTextField();
 		_panelContent.add(txfLink, "3, 1, fill, default");
 		txfLink.setColumns(10);
 
-		JLabel _lblCountry = new JLabel("Country");
+		JLabel _lblCountry = new JLabel("Quốc gia");
 		_lblCountry.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_lblCountry.setHorizontalAlignment(SwingConstants.RIGHT);
+		_lblCountry.setPreferredSize(new Dimension(55, 25));
 		_panelContent.add(_lblCountry, "1, 3, right, top");
 
 		JPanel _panel = new JPanel();
@@ -86,22 +92,27 @@ public class ComparePriceFrame extends JFrame {
 		JCheckBox _chckbxCn = new JCheckBox("CN");
 		_chckbxCn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_panel.add(_chckbxCn);
+		this.checkBoxsCountries[0] = _chckbxCn;
 
 		JCheckBox _chckbxDe = new JCheckBox("DE");
 		_chckbxDe.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_panel.add(_chckbxDe);
+		this.checkBoxsCountries[1] = _chckbxDe;
 
 		JCheckBox _chckbxEs = new JCheckBox("ES");
 		_chckbxEs.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_panel.add(_chckbxEs);
+		this.checkBoxsCountries[2] = _chckbxEs;
 
 		JCheckBox _chckbxUk = new JCheckBox("UK");
 		_chckbxUk.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_panel.add(_chckbxUk);
+		this.checkBoxsCountries[3] = _chckbxUk;
 
 		JCheckBox _chckbxUs = new JCheckBox("US");
 		_chckbxUs.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		_panel.add(_chckbxUs);
+		this.checkBoxsCountries[4] = _chckbxUs;
 
 		btnRun = new JButton("Thực hiện");
 		btnRun.setPreferredSize(new Dimension(50, 25));
@@ -142,6 +153,10 @@ public class ComparePriceFrame extends JFrame {
 	 */
 	public JButton getBtnRun() {
 		return this.btnRun;
+	}
+
+	public JCheckBox[] getCheckBoxsCountries() {
+		return this.checkBoxsCountries;
 	}
 
 }
