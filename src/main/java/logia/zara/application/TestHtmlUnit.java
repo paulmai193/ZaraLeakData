@@ -42,7 +42,7 @@ public class TestHtmlUnit {
 		// }
 
 		GetUrlController _controller = new GetUrlController();
-		_controller.exchangeCurrency("EUR", "GBP", (float) 12.99);
+		System.out.println(_controller.exchangeCurrency("GBP", "$", (float) 12.99));
 	}
 
 }

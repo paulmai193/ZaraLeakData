@@ -138,6 +138,10 @@ public class ProductData {
 	 * @param __currency the new currency
 	 */
 	public void setCurrency(String __currency) {
+		if (__currency.equals("¥")) {
+			// Special, convert ¥ to CNY
+			__currency = "CNY";
+		}
 		this.currency = __currency;
 	}
 

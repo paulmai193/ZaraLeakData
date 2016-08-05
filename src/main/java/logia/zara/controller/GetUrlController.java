@@ -20,6 +20,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import logia.zara.db.Data;
 import logia.zara.db.DataDAO;
@@ -41,19 +43,26 @@ public final class GetUrlController {
 	private static final Logger LOGGER = Logger.getLogger(GetUrlController.class);
 
 	/**
-	 * Exchange currency, using Yahoo API
+	 * Exchange currency, using Yahoo API.
 	 *
 	 * @param __from the from
 	 * @param __to the to
 	 * @param __value the value
+	 * @return the exchaged value
 	 * @throws Exception the exception
 	 */
-	public void exchangeCurrency(String __from, String __to, float __value) throws Exception {
-		String _api = "https://query.yahooapis.com/v1/public/yql?"
-		        + "q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22{0}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-		_api = MessageFormat.format(_api, __from + __to);
+	public float exchangeCurrency(String __from, String __to, float __value) throws Exception {
+		if (__from.equals(__to)) {
+			return __value;
+		}
+		String _api = "http://api.fixer.io/latest?base={0}&symbols={1}";
+		_api = MessageFormat.format(_api, __from, __to);
 		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(_api);) {
-			System.out.println(_httpUnitRequest.rawCrawl());
+			JsonObject _jsonApiResponse = (JsonObject) new JsonParser()
+			        .parse(_httpUnitRequest.rawCrawl());
+			JsonObject _jsonRates = _jsonApiResponse.get("rates").getAsJsonObject();
+			float _rate = _jsonRates.get(__to).getAsFloat();
+			return _rate * __value;
 		}
 		catch (Exception __ex) {
 			throw __ex;
@@ -79,18 +88,34 @@ public final class GetUrlController {
 			GetUrlController.LOGGER.debug("Scan link " + __url);
 			GetUrlController.LOGGER.debug("Start get price");
 			List<?> _tags = _page.getByXPath("//*[@id=\"product\"]/div[3]/div/div/div");
+			if (_tags.size() == 0) {
+				throw new InterruptedException("No price in this link");
+			}
 			HtmlDivision _div = (HtmlDivision) _tags.get(0);
 			SalePriceListener _salePriceListener = new SalePriceListener();
 			_div.addDomChangeListener(_salePriceListener);
 			String _availablePrice = _salePriceListener.getAvailablePrice();
+			float _productPrice;
+			String _currency;
 			try {
-				_data.getProductData().setProductPrice(_availablePrice.split(" ")[0]);
-				_data.getProductData().setCurrency(_availablePrice.split(" ")[1]);
+				// _data.getProductData().setProductPrice(_availablePrice.split(" ")[0]);
+				// _data.getProductData().setCurrency(_availablePrice.split(" ")[1]);
+				String _rawProductPrice = _availablePrice.split(" ")[0];
+				_productPrice = Float.parseFloat(_rawProductPrice);
+				_currency = _availablePrice.split(" ")[1];
 			}
-			catch (NumberFormatException ___ex) {
-				_data.getProductData().setProductPrice(_availablePrice.split(" ")[1]);
-				_data.getProductData().setCurrency(_availablePrice.split(" ")[0]);
+			catch (NumberFormatException __ex) {
+				String _rawProductPrice = _availablePrice.split(" ")[1];
+				_productPrice = Float.parseFloat(_rawProductPrice);
+				_currency = _availablePrice.split(" ")[0];
 			}
+			if (_currency.equals("¥")) {
+				// Special, convert ¥ to CNY
+				_currency = "CNY";
+			}
+			float _exchangedPrice = this.exchangeCurrency(_currency, "USD", _productPrice);
+			_data.getProductData().setProductPrice(_exchangedPrice);
+			_data.getProductData().setCurrency("USD");
 
 			_data.getProductData().setOnSale(_salePriceListener.isOnSale());
 			GetUrlController.LOGGER.debug("End get price");

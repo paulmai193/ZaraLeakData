@@ -98,8 +98,8 @@ public class ComparePriceProcess extends Thread {
 					try {
 						SaleProductData _tmpSaleProduct = _controller.scanUrl(_tmpLink);
 						if (_cheapestProduct == null || _tmpSaleProduct.getProductData()
-								.getProductPrice() < _cheapestProduct.getProductData()
-								.getProductPrice()) {
+						        .getProductPrice() < _cheapestProduct.getProductData()
+						                .getProductPrice()) {
 							_cheapestProduct = _tmpSaleProduct;
 						}
 					}
@@ -118,16 +118,16 @@ public class ComparePriceProcess extends Thread {
 				_msg = "Sản phẩm rẻ nhất:\n";
 				_msg += "Tên: " + _cheapestProduct.getProductData().getProductName() + "\n";
 				_msg += "Giá: " + _cheapestProduct.getProductData().getProductPrice() + " "
-						+ _cheapestProduct.getProductData().getCurrency() + "\n";
+				        + _cheapestProduct.getProductData().getCurrency() + "\n";
 				_msg += "Link: " + _cheapestProduct.getProductData().getLink() + "\n";
 			}
 
 			JOptionPane.showMessageDialog(this.frame, _msg, "Sản phẩm rẻ nhất",
-					JOptionPane.INFORMATION_MESSAGE);
+			        JOptionPane.INFORMATION_MESSAGE);
 		}
 		catch (MalformedURLException __ex) {
 			JOptionPane.showMessageDialog(this.frame, "Link không đúng", "",
-					JOptionPane.ERROR_MESSAGE);
+			        JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception __ex) {
 			ComparePriceProcess.LOGGER.error(__ex.getMessage(), __ex);
