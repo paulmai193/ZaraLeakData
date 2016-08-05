@@ -54,7 +54,7 @@ public class Data extends HashRedisClass {
 		_saleProductData.setRef(this.ref);
 		_saleProductData.getProductData().setLink(this.getValue().get("link"));
 		_saleProductData.getProductData()
-		        .setOnSale(Boolean.getBoolean(this.getValue().get("on_sale")));
+		.setOnSale(Boolean.getBoolean(this.getValue().get("on_sale")));
 		_saleProductData.getProductData().setPhotoUrl(this.getValue().get("product_photo"));
 		_saleProductData.getProductData().setProductName(this.getValue().get("product_name"));
 		_saleProductData.getProductData().setProductPrice(this.getValue().get("product_price"));

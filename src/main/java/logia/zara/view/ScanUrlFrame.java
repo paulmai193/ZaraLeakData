@@ -84,7 +84,7 @@ public class ScanUrlFrame extends JFrame {
 		Dimension _dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(450, 150);
 		this.setLocation(_dim.width / 2 - this.getSize().width / 2,
-		        _dim.height / 2 - this.getSize().height / 2);
+				_dim.height / 2 - this.getSize().height / 2);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.contentPane.setLayout(new BorderLayout(0, 0));
@@ -139,8 +139,8 @@ public class ScanUrlFrame extends JFrame {
 		this.txfLink.setColumns(10);
 
 		this.txfOutput = new JTextField(System.getProperty("user.dir") + File.separator + "output"
-		        + File.separator + "products ("
-		        + new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
+				+ File.separator + "products ("
+				+ new SimpleDateFormat("dd MMM, yyyy").format(new Date()) + ").pdf");
 		this.txfOutput.setEditable(false);
 		this.txfOutput.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		this.spComponent.setLeftComponent(this.txfOutput);
@@ -169,7 +169,7 @@ public class ScanUrlFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent __e) {
 				JFileChooser _chooseOutputDirectory = new JFileChooser(
-		                ScanUrlFrame.this.txfOutput.getText());
+						ScanUrlFrame.this.txfOutput.getText());
 				_chooseOutputDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				int _returnVal = _chooseOutputDirectory.showOpenDialog(null);
 				if (_returnVal == JFileChooser.APPROVE_OPTION) {

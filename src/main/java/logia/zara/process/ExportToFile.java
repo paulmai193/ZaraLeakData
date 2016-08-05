@@ -30,7 +30,7 @@ public final class ExportToFile {
 	 * @throws Exception the exception
 	 */
 	public static void exportOnSalesProduct(final ExportToPdf __pdf, List<SaleProductData> __datas)
-	        throws Exception {
+			throws Exception {
 		__datas.forEach(new Consumer<SaleProductData>() {
 
 			@Override
@@ -53,19 +53,19 @@ public final class ExportToFile {
 	 * @throws Exception the exception
 	 */
 	public static void exportOnSalesProduct(ExportToPdf __pdf, SaleProductData __data)
-	        throws Exception {
+			throws Exception {
 		if (__data.getProductData().isOnSale()
-		        && !__data.getProductData().getProductSizes().isEmpty()) {
+				&& !__data.getProductData().getProductSizes().isEmpty()) {
 			__pdf.addParagraph(__data.getProductData().getProductName());
 			__pdf.addParagraph(__data.getProductData().getProductPrice() + " "
-			        + __data.getProductData().getCurrency());
+					+ __data.getProductData().getCurrency());
 			__pdf.addParagraph(__data.getProductData().getProductSizesToString());
 			try {
 				__pdf.addImage(new URL(__data.getProductData().getPhotoUrl()));
 			}
 			catch (IOException _e) {
 				ExportToFile.LOGGER.error("URL error: " + __data.getProductData().getPhotoUrl(),
-				        _e);
+						_e);
 				throw _e;
 			}
 			__pdf.addParagraph(__data.getProductData().getLink());
@@ -81,9 +81,9 @@ public final class ExportToFile {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void exportOnSalesProduct(File __output, SaleProductData __data)
-	        throws IOException {
+			throws IOException {
 		if (__data.getProductData().isOnSale()
-		        && !__data.getProductData().getProductSizes().isEmpty()) {
+				&& !__data.getProductData().getProductSizes().isEmpty()) {
 			List<String> lines = new ArrayList<String>();
 
 			lines.add(__data.getProductData().getProductName());
@@ -91,7 +91,7 @@ public final class ExportToFile {
 			lines.clear();
 
 			lines.add(__data.getProductData().getProductPrice() + " "
-			        + __data.getProductData().getCurrency());
+					+ __data.getProductData().getCurrency());
 			FileUtils.writeLines(__output, lines, true);
 			lines.clear();
 

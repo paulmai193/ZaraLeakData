@@ -36,6 +36,26 @@ public class ComparePriceProcess extends Thread {
 		this.frame = __frame;
 	}
 
+	/**
+	 * End.
+	 */
+	private void end() {
+		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		this.frame.getTxfLink().setEnabled(true);
+		this.frame.getBtnRun().setEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Thread#interrupt()
+	 */
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		this.end();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,61 +92,48 @@ public class ComparePriceProcess extends Thread {
 			for (String _country : _selectedCountries) {
 				if (_country != null) {
 					String _tmpLink = _tmpPrefix + _country + _tmpSurfix;
-					System.out.println("Temp Link " + _tmpLink);
+					ComparePriceProcess.LOGGER.debug("Temp Link " + _tmpLink);
 
 					// Scan url
 					try {
 						SaleProductData _tmpSaleProduct = _controller.scanUrl(_tmpLink);
 						if (_cheapestProduct == null || _tmpSaleProduct.getProductData()
-						        .getProductPrice() < _cheapestProduct.getProductData()
-						                .getProductPrice()) {
+								.getProductPrice() < _cheapestProduct.getProductData()
+								.getProductPrice()) {
 							_cheapestProduct = _tmpSaleProduct;
 						}
 					}
 					catch (InterruptedException __ex) {
 						// Just warning this exception
-						LOGGER.warn(__ex.getMessage());
+						ComparePriceProcess.LOGGER.warn(__ex.getMessage());
 					}
 
 				}
 			}
-			String _msg = "Sản phẩm rẻ nhất:\n";
-			_msg += "Tên: " + _cheapestProduct.getProductData().getProductName() + "\n";
-			_msg += "Giá: " + _cheapestProduct.getProductData().getProductPrice() + " "
-			        + _cheapestProduct.getProductData().getCurrency() + "\n";
-			_msg += "Link: " + _cheapestProduct.getProductData().getLink() + "\n";
+			String _msg;
+			if (_cheapestProduct == null) {
+				_msg = "Không tìm thấy sản phẩm tới link tương ứng.";
+			}
+			else {
+				_msg = "Sản phẩm rẻ nhất:\n";
+				_msg += "Tên: " + _cheapestProduct.getProductData().getProductName() + "\n";
+				_msg += "Giá: " + _cheapestProduct.getProductData().getProductPrice() + " "
+						+ _cheapestProduct.getProductData().getCurrency() + "\n";
+				_msg += "Link: " + _cheapestProduct.getProductData().getLink() + "\n";
+			}
+
 			JOptionPane.showMessageDialog(this.frame, _msg, "Sản phẩm rẻ nhất",
-			        JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 		catch (MalformedURLException __ex) {
 			JOptionPane.showMessageDialog(this.frame, "Link không đúng", "",
-			        JOptionPane.ERROR_MESSAGE);
+					JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception __ex) {
-			LOGGER.error(__ex.getMessage(), __ex);
+			ComparePriceProcess.LOGGER.error(__ex.getMessage(), __ex);
 		}
 		finally {
 			this.end();
 		}
-	}
-
-	/**
-	 * End.
-	 */
-	private void end() {
-		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		this.frame.getTxfLink().setEnabled(true);
-		this.frame.getBtnRun().setEnabled(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#interrupt()
-	 */
-	@Override
-	public void interrupt() {
-		super.interrupt();
-		this.end();
 	}
 }

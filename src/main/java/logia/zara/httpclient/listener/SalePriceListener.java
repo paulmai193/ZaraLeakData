@@ -71,7 +71,7 @@ public class SalePriceListener implements DomChangeListener {
 	public void nodeAdded(DomChangeEvent __event) {
 		SalePriceListener.LOGGER.debug("Sale listener init");
 		List<?> _spans = __event.getChangedNode()
-		        .getByXPath("//*[@id=\"product\"]/div[2]/div/div/div[1]/span[1]");
+				.getByXPath("//*[@id=\"product\"]/div[3]/div/div/div/span[1]");
 		for (Object name : _spans) {
 			HtmlSpan _span = (HtmlSpan) name;
 			if (_span.getAttribute("class").equals("sale")) {
@@ -82,7 +82,7 @@ public class SalePriceListener implements DomChangeListener {
 			}
 		}
 		_spans = __event.getChangedNode()
-		        .getByXPath("//*[@id=\"product\"]/div[2]/div/div/div[1]/span[2]");
+				.getByXPath("//*[@id=\"product\"]/div[3]/div/div/div/span[2]");
 		for (Object name : _spans) {
 			HtmlSpan _span = (HtmlSpan) name;
 			if (_span.getAttribute("class").equals("sale")) {

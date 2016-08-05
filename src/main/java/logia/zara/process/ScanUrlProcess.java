@@ -53,7 +53,7 @@ public final class ScanUrlProcess extends Thread {
 		// Run scan data from url
 		GetUrlController _controller = new GetUrlController();
 		_controller.scanUrl(this.frame.getTxfLink().getText(), this.frame.getTxfOutput().getText(),
-		        this.frame.getProgressBar());
+				this.frame.getProgressBar());
 
 		// Enable UI components
 		this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

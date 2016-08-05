@@ -9,14 +9,16 @@ import java.util.List;
 
 import javax.swing.JProgressBar;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.gargoylesoftware.htmlunit.html.DomText;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import logia.zara.db.Data;
@@ -39,6 +41,26 @@ public final class GetUrlController {
 	private static final Logger LOGGER = Logger.getLogger(GetUrlController.class);
 
 	/**
+	 * Exchange currency, using Yahoo API
+	 *
+	 * @param __from the from
+	 * @param __to the to
+	 * @param __value the value
+	 * @throws Exception the exception
+	 */
+	public void exchangeCurrency(String __from, String __to, float __value) throws Exception {
+		String _api = "https://query.yahooapis.com/v1/public/yql?"
+		        + "q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22{0}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+		_api = MessageFormat.format(_api, __from + __to);
+		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(_api);) {
+			System.out.println(_httpUnitRequest.rawCrawl());
+		}
+		catch (Exception __ex) {
+			throw __ex;
+		}
+	}
+
+	/**
 	 * Scan url.
 	 *
 	 * @param __url the url
@@ -49,50 +71,65 @@ public final class GetUrlController {
 		SaleProductData _data = new SaleProductData();
 		_data.getProductData().setLink(__url);
 
+		HtmlPage _page = null;
 		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(__url);) {
-			HtmlPage _page = _httpUnitRequest.crawl();
+			_page = _httpUnitRequest.crawl();
 
 			// Get price and on sale status
 			GetUrlController.LOGGER.debug("Scan link " + __url);
 			GetUrlController.LOGGER.debug("Start get price");
-			List<?> _tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/div[1]");
+			List<?> _tags = _page.getByXPath("//*[@id=\"product\"]/div[3]/div/div/div");
 			HtmlDivision _div = (HtmlDivision) _tags.get(0);
 			SalePriceListener _salePriceListener = new SalePriceListener();
 			_div.addDomChangeListener(_salePriceListener);
 			String _availablePrice = _salePriceListener.getAvailablePrice();
-			_data.getProductData().setProductPrice(_availablePrice.split(" ")[0]);
-			_data.getProductData().setCurrency(_availablePrice.split(" ")[1]);
+			try {
+				_data.getProductData().setProductPrice(_availablePrice.split(" ")[0]);
+				_data.getProductData().setCurrency(_availablePrice.split(" ")[1]);
+			}
+			catch (NumberFormatException ___ex) {
+				_data.getProductData().setProductPrice(_availablePrice.split(" ")[1]);
+				_data.getProductData().setCurrency(_availablePrice.split(" ")[0]);
+			}
+
 			_data.getProductData().setOnSale(_salePriceListener.isOnSale());
 			GetUrlController.LOGGER.debug("End get price");
 
 			// Get ref
 			GetUrlController.LOGGER.debug("Start get ref");
-			_tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/p[1]");
+			_tags = _page.getByXPath("//*[@id=\"product\"]/div[3]/div/div/p[2]");
+			if (_tags.size() == 0) {
+				throw new InterruptedException("No ref code in this link");
+			}
 			_data.setRef(((HtmlParagraph) _tags.get(0)).asText());
 
 			// Get name
 			GetUrlController.LOGGER.debug("Start get name");
-			_tags = _page.getByXPath("//*[@id=\"product\"]/div[2]/div/div/header/h2/text()");
+			_tags = _page.getByXPath("//*[@id=\"product\"]/div[3]/div/div/header/h1/text()");
 			_data.getProductData().setProductName(((DomText) _tags.get(0)).asText());
 			GetUrlController.LOGGER.debug("End get name");
 
 			// Get photo url
 			GetUrlController.LOGGER.debug("Start get photo");
-			_tags = _page.getByXPath("//*[@id=\"main-images\"]/div[1]/a");
-			HtmlAnchor _a = (HtmlAnchor) _tags.get(0);
-			_data.getProductData().setPhotoUrl("http:" + _a.getHrefAttribute());
+			_tags = _page.getByXPath("//*[@id=\"main-images\"]/div[1]/a/img");
+			HtmlImage _img = (HtmlImage) _tags.get(0);
+			_data.getProductData().setPhotoUrl("http:" + _img.getSrcAttribute());
 			GetUrlController.LOGGER.debug("End get photo");
 
 			// Get product size
 			GetUrlController.LOGGER.debug("Start get size");
 			List<String> _sizes = new ArrayList<>();
 			_tags = _page
-			        .getByXPath("//*[@id=\"product\"]/div[2]/div/div/form/div[1]/div/table/tbody");
+			        .getByXPath("//*[@id=\"product\"]/div[3]/div/div/form/div[1]/div/table/tbody");
 			HtmlTableBody _tBody = (HtmlTableBody) _tags.get(0);
 			List<HtmlTableRow> _rows = _tBody.getRows();
 			for (HtmlTableRow _tr : _rows) {
 				if (_tr.getAttribute("class").equals("product-size _product-size ")) {
-					_sizes.add(_tr.asText());
+					for (HtmlTableCell _td : _tr.getCells()) {
+						if (_td.getAttribute("class").equals("size-name _size-name")) {
+							_sizes.add(_td.asText());
+						}
+					}
 				}
 			}
 			_data.getProductData().setProductSizes(_sizes);
@@ -103,7 +140,12 @@ public final class GetUrlController {
 		catch (Exception __ex) {
 			throw __ex;
 		}
-
+		finally {
+			if (_page != null) {
+				FileUtils.writeStringToFile(new File("/home/logia193/Desktop/testpage.htm"),
+				        _page.asXml());
+			}
+		}
 	}
 
 	/**
@@ -175,26 +217,6 @@ public final class GetUrlController {
 		finally {
 			__progressBar.setString("Finish!");
 			__progressBar.setValue(0);
-		}
-	}
-
-	/**
-	 * Exchange currency, using Yahoo API
-	 *
-	 * @param __from the from
-	 * @param __to the to
-	 * @param __value the value
-	 * @throws Exception the exception
-	 */
-	public void exchangeCurrency(String __from, String __to, float __value) throws Exception {
-		String _api = "https://query.yahooapis.com/v1/public/yql?"
-		        + "q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22{0}%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-		_api = MessageFormat.format(_api, __from + __to);
-		try (HttpUnitRequest _httpUnitRequest = new HttpUnitRequest(_api);) {
-			System.out.println(_httpUnitRequest.rawCrawl());
-		}
-		catch (Exception __ex) {
-			throw __ex;
 		}
 	}
 

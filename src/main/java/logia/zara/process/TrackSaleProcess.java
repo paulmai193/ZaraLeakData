@@ -87,7 +87,7 @@ public class TrackSaleProcess extends Thread {
 		// Get list link from wish list file
 		try {
 			final List<String> _listUrls = FileUtils
-			        .readLines(new File(this.frame.getTxfWishList().getText()));
+					.readLines(new File(this.frame.getTxfWishList().getText()));
 			final GetUrlController _controller = new GetUrlController();
 
 			// Run scan data from url
@@ -106,23 +106,23 @@ public class TrackSaleProcess extends Thread {
 							}
 							// check if price is lower, notify throw email
 							if (_savedSaleProduct != null && (_newSaleProduct.getProductData()
-			                        .getProductPrice() < _savedSaleProduct.getProductData()
-			                                .getProductPrice()
-			                        || true)) {
+									.getProductPrice() < _savedSaleProduct.getProductData()
+									.getProductPrice()
+									|| true)) {
 								String _title = "Sản phẩm " + _newSaleProduct.getRef()
-			                            + " đang giảm giá";
+								+ " đang giảm giá";
 								String _content = "Giá cũ: "
-			                            + _savedSaleProduct.getProductData().getProductPrice() + " "
-			                            + _savedSaleProduct.getProductData().getCurrency() + "<br>";
+										+ _savedSaleProduct.getProductData().getProductPrice() + " "
+										+ _savedSaleProduct.getProductData().getCurrency() + "<br>";
 								_content += "Giá mới: "
-			                            + _newSaleProduct.getProductData().getProductPrice() + " "
-			                            + _newSaleProduct.getProductData().getCurrency() + "<br>";
+										+ _newSaleProduct.getProductData().getProductPrice() + " "
+										+ _newSaleProduct.getProductData().getCurrency() + "<br>";
 								_content += "Link: " + _newSaleProduct.getProductData().getLink();
 
 								// Send notify
 								EmailUtil _emailUtil = new EmailUtil();
 								_emailUtil.sendEmail("vngiay@yahoo.com", _title, _content,
-			                            RecipientType.TO);
+										RecipientType.TO);
 							}
 
 							// Update newest product to DB
@@ -144,14 +144,14 @@ public class TrackSaleProcess extends Thread {
 		}
 		catch (FileNotFoundException _ex) {
 			JOptionPane.showMessageDialog(this.frame,
-			        "Vui lòng chọn Wishlist các sản phẩm cần theo dõi", "Không tìm thấy Wishlist",
-			        JOptionPane.ERROR_MESSAGE);
+					"Vui lòng chọn Wishlist các sản phẩm cần theo dõi", "Không tìm thấy Wishlist",
+					JOptionPane.ERROR_MESSAGE);
 			this.endTrack();
 		}
 		catch (Exception _ex) {
 			TrackSaleProcess.LOGGER.error("Error when track sale product", _ex);
 			JOptionPane.showMessageDialog(this.frame, "Lỗi: " + _ex.getMessage(), "Lỗi ứng dụng",
-			        JOptionPane.ERROR_MESSAGE);
+					JOptionPane.ERROR_MESSAGE);
 			this.endTrack();
 		}
 	}

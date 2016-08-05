@@ -40,22 +40,22 @@ public final class Application {
 
 					/* Init email utility */
 					EmailUtil.setPropertiesPath(EmailUtil.class.getClassLoader()
-		                    .getResource("email.properties").toURI());
+							.getResource("email.properties").toURI());
 
 					/* Init program exit event */
 					Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
-			            @Override
-			            public void run() {
-				            JedisFactory jedisFactory = JedisFactory.getInstance();
-				            try {
-					            jedisFactory.release();
-				            }
-				            catch (Exception _e) {
-					            // Swallow this exception
-				            }
-			            }
-		            }));
+						@Override
+						public void run() {
+							JedisFactory jedisFactory = JedisFactory.getInstance();
+							try {
+								jedisFactory.release();
+							}
+							catch (Exception _e) {
+								// Swallow this exception
+							}
+						}
+					}));
 				}
 				catch (Exception e) {
 					Application.LOGGER.error("Error when running application", e);
